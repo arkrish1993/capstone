@@ -1,7 +1,9 @@
-export default function Loader() {
+export default function Loader({
+  loaderStyle = "spinner-grow spinner-grow-sm text-light",
+}) {
   return (
     <div className="text-center">
-      <div class="spinner-grow spinner-grow-sm text-light" role="status"></div>
+      <div className={loaderStyle} role="status"></div>
     </div>
   );
 }

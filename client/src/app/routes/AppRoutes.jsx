@@ -1,17 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "../features/auth/Login";
-import AppShell from "../../app/layouts/AppShell";
-import ErrorBoundary from "../shared/ErrorBoundary";
+import AdminDashboard from "../features/admin/AdminDashboard";
+import AccessDenied from "../shared/AccessDenied";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
-      <Route
-        path="/home"
-        element={<AppShell>{/* Replace with proper components */}</AppShell>}
-      />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/error" element={<AccessDenied />} />
     </Routes>
   );
 }

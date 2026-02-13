@@ -7,37 +7,37 @@ const { authorize } = require("../middleware/roleGuard");
 router.post(
   "/",
   protect,
-  authorize("ADMIN", "UNDERWRITER"),
+  authorize("UNDERWRITER"),
   policyController.createPolicy,
 );
 router.get(
   "/",
   protect,
-  authorize("ADMIN", "UNDERWRITER"),
+  authorize("UNDERWRITER"),
   policyController.getPolicies,
 );
 router.get(
   "/:id",
   protect,
-  authorize("ADMIN", "UNDERWRITER"),
+  authorize("UNDERWRITER"),
   policyController.getPolicyById,
 );
 router.put(
   "/:id",
   protect,
-  authorize("ADMIN", "UNDERWRITER"),
+  authorize("UNDERWRITER"),
   policyController.updatePolicy,
 );
 router.delete(
   "/:id",
   protect,
-  authorize("ADMIN", "UNDERWRITER"),
+  authorize("UNDERWRITER"),
   policyController.deletePolicy,
 );
 router.post(
   "/:policyId/approve",
   protect,
-  authorize("ADMIN", "UNDERWRITER"),
+  authorize("UNDERWRITER"),
   policyController.approvePolicy,
 );
 

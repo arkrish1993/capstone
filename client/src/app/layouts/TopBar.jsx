@@ -13,7 +13,7 @@ export default function TopBar() {
   };
 
   return (
-    <nav className="navbar navbar-light bg-dark bg-gradient shadow p-4 sticky-top">
+    <nav className="navbar navbar-light bg-dark bg-gradient shadow p-4 sticky-top w-100">
       <span
         className="navbar-brand mb-0 h1 text-white"
         style={{ letterSpacing: "9px" }}

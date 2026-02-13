@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema(
       default: "ACTIVE",
     },
 
+    isRootUser: {
+      type: Boolean,
+      default: false,
+    },
+
     lastLoginAt: {
       type: Date,
       default: null,

@@ -20,7 +20,7 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="container bg-dark bg-gradient vh-100 d-flex align-items-center justify-content-center">
+        <div className="container-fluid bg-dark bg-gradient vh-100 d-flex align-items-center justify-content-center">
           <div
             className="card border-danger shadow p-5 text-center"
             style={{ maxWidth: 500 }}

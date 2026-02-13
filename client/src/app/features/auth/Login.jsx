@@ -1,11 +1,13 @@
 import api from "../../../services/apiClient";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/capstone.svg";
 import { useAuth } from "../../context/AuthContext";
 import ErrorAlert from "../../shared/ErrorAlert";
 import Loader from "../../shared/Loader";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({});
   const [authError, setAuthError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +21,11 @@ export default function Login() {
       const res = await api.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       setLoginCredentials(res.data);
-      window.location.href = "/home";
+      if (res?.data?.user?.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/error");
+      }
       setIsLoading(false);
     } catch (err) {
       setAuthError(err);

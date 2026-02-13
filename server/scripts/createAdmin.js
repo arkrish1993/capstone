@@ -15,9 +15,10 @@ const User = require("../src/models/User");
     email: "admin@capstone.com",
     passwordHash: hashed,
     role: "ADMIN",
-    permissions: [], // all access
+    permissions: ["CREATE", "UPDATE", "DELETE"],
     status: "ACTIVE",
     lastLoginAt: new Date(),
+    isRootUser: true,
   });
 
   console.log("Admin user created");
