@@ -2,36 +2,38 @@ import api from "../../../services/apiClient";
 import { useState } from "react";
 import logo from "../../../assets/capstone.svg";
 import { useAuth } from "../../context/AuthContext";
+import ErrorAlert from "../../shared/ErrorAlert";
+import Loader from "../../shared/Loader";
 
 export default function Login() {
   const [form, setForm] = useState({});
   const [authError, setAuthError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { setLoginCredentials } = useAuth();
 
   const submit = async (e) => {
     try {
       e.preventDefault();
       setAuthError(null);
+      setIsLoading(true);
       const res = await api.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       setLoginCredentials(res.data);
       window.location.href = "/home";
+      setIsLoading(false);
     } catch (err) {
       setAuthError(err);
+      setIsLoading(false);
     }
   };
 
   return (
     <>
       {authError && (
-        <div className="alert alert-danger alert-dismissible fixed-top fade show p-4 inline">
-          Access denied. Please check your credentials.
-          <button
-            type="button"
-            className="btn-close mt-2 me-2"
-            onClick={() => setAuthError(null)}
-          ></button>
-        </div>
+        <ErrorAlert
+          alertMessage="Access denied. Please check your credentials."
+          onDismiss={() => setAuthError(null)}
+        />
       )}
       <div className="container vh-100 d-flex align-items-center justify-content-center">
         <div
@@ -83,9 +85,9 @@ export default function Login() {
                 <button
                   type="submit"
                   className="btn btn-success w-100 mt-3"
-                  disabled={!form.email || !form.password}
+                  disabled={!form.email || !form.password || isLoading}
                 >
-                  Sign In
+                  {isLoading ? <Loader /> : "Sign In"}
                 </button>
               </form>
             </div>
