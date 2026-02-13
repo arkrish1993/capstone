@@ -1,6 +1,7 @@
 const Policy = require("../models/Policy");
 const Treaty = require("../models/Treaty");
 const RiskAllocation = require("../models/RiskAllocation");
+const AuditLog = require("../models/AuditLog");
 
 exports.calculateExposure = async (policyId) => {
   const policy = await Policy.findById(policyId);
@@ -95,4 +96,16 @@ exports.getTotalExposure = async () => {
     { $group: { _id: null, totalExposure: { $sum: "$sumInsured" } } },
   ]);
   return result[0]?.totalExposure || 0;
+};
+
+exports.getClientIp = async (req) => {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  return req.socket.remoteAddress;
+};
+
+exports.createAuditLog = async (log) => {
+  await AuditLog.create(log);
 };

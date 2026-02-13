@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const { getClientIp, createAuditLog } = require("../services/helperService");
 
 exports.createUser = async (req, res) => {
   try {
@@ -7,6 +8,14 @@ exports.createUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
     const user = await User.create({ ...req.body, passwordHash });
+    createAuditLog({
+      entityType: "USER",
+      entityId: user._id,
+      action: "CREATE",
+      newValue: user,
+      performedBy: req.user._id,
+      ipAddress: getClientIp(req),
+    });
     res.status(201).json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
