@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/capstone.svg";
 import api from "../../services/apiClient";
-import ErrorAlert from "../../shared/ErrorAlert";
+import Alert from "../../shared/Alert";
 import Loader from "../../shared/Loader";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -36,12 +36,12 @@ export default function Login() {
   return (
     <>
       {authError && (
-        <ErrorAlert
+        <Alert
           alertMessage="Access denied. Please check your credentials."
           onDismiss={() => setAuthError(null)}
         />
       )}
-      <div className="container vh-100 d-flex align-items-center justify-content-center">
+      <div className="container-fluid vh-100 d-flex bg-success bg-gradient align-items-center justify-content-center">
         <div
           className="card shadow-lg border-0"
           style={{ maxWidth: 900, width: "100%" }}

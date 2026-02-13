@@ -1,9 +1,10 @@
 /**
  * TO DO:
- * 1. Error handling alerts
+ * 1. Error handling and success alerts
  * 2. Loading spinner for modal buttons
  * 3. Validations for modal
  * 4. Disable save button for create
+ * 5. Implement permission based check
  */
 import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
