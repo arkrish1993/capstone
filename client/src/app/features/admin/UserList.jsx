@@ -1,16 +1,16 @@
 /**
  * TO DO:
  * 1. Error handling alerts
- * 2. Confirm modal for delete operation
- * 3. Loading spinner for modal buttons
- * 4. Validations for modal
- * 5. Disable save button for create
+ * 2. Loading spinner for modal buttons
+ * 3. Validations for modal
+ * 4. Disable save button for create
  */
 import { useEffect, useState } from "react";
-import api from "../../../services/apiClient";
+import api from "../../services/apiClient";
 import Loader from "../../shared/Loader";
 import ErrorState from "../../shared/ErrorState";
 import Badge from "../../shared/Badge";
+import ConfirmDialog from "../../shared/ConfirmDialog";
 import UserForm from "./UserForm";
 
 export default function UserList() {
@@ -19,6 +19,8 @@ export default function UserList() {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -46,21 +48,32 @@ export default function UserList() {
     setShowModal(true);
   };
 
-  const onDelete = async (id) => {
+  const onDeleteClick = (user) => {
+    setUserToDelete(user);
+    setShowDeleteConfirmModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await api.delete("/users/" + id);
+      await api.delete("/users/" + userToDelete._id);
       fetchUsers();
     } catch (err) {
       console.log(err);
+    } finally {
+      setShowDeleteConfirmModal(false);
+      setUserToDelete(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirmModal(false);
+    setUserToDelete(null);
   };
 
   const onModalClose = (reload = false) => {
     setShowModal(false);
     setSelectedUser(null);
-    if (reload) {
-      fetchUsers();
-    }
+    if (reload) fetchUsers();
   };
 
   if (loading) {
@@ -88,21 +101,11 @@ export default function UserList() {
           <table className="table table-hover mb-0">
             <thead className="table-light">
               <tr height="60" className="align-middle">
-                <th width="500" className="bg-dark bg-gradient text-white">
-                  Name
-                </th>
-                <th width="500" className="bg-dark bg-gradient text-white">
-                  Email
-                </th>
-                <th width="500" className="bg-dark bg-gradient text-white">
-                  Role
-                </th>
-                <th width="500" className="bg-dark bg-gradient text-white">
-                  Status
-                </th>
-                <th width="150" className="bg-dark bg-gradient text-white">
-                  Actions
-                </th>
+                <th className="bg-dark bg-gradient text-white">Name</th>
+                <th className="bg-dark bg-gradient text-white">Email</th>
+                <th className="bg-dark bg-gradient text-white">Role</th>
+                <th className="bg-dark bg-gradient text-white">Status</th>
+                <th className="bg-dark bg-gradient text-white">Actions</th>
               </tr>
             </thead>
 
@@ -127,9 +130,10 @@ export default function UserList() {
                         >
                           <i className="bi bi-pencil-square"></i>
                         </button>
+
                         <button
                           className="btn btn-outline-danger btn-sm"
-                          onClick={() => onDelete(user._id)}
+                          onClick={() => onDeleteClick(user)}
                           title="Delete User"
                         >
                           <i className="bi bi-trash"></i>
@@ -143,6 +147,7 @@ export default function UserList() {
           </table>
         </div>
       </div>
+
       {showModal && (
         <UserForm
           onClose={() => onModalClose(true)}
@@ -150,6 +155,14 @@ export default function UserList() {
           userData={selectedUser}
         />
       )}
+
+      <ConfirmDialog
+        showModal={showDeleteConfirmModal}
+        title="Delete User"
+        message={`Are you sure you want to delete ${userToDelete?.username}?`}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </>
   );
 }

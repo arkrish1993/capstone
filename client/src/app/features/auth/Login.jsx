@@ -1,10 +1,10 @@
-import api from "../../../services/apiClient";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/capstone.svg";
-import { useAuth } from "../../context/AuthContext";
+import api from "../../services/apiClient";
 import ErrorAlert from "../../shared/ErrorAlert";
 import Loader from "../../shared/Loader";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Login() {
   const navigate = useNavigate();

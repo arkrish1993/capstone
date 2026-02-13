@@ -1,5 +1,10 @@
+/**
+ * 1. Validations for save
+ * 2. Error styling and alerts
+ */
 import { useEffect, useState } from "react";
-import api from "../../../services/apiClient";
+import api from "../../services/apiClient";
+import FormField from "../../shared/FormField";
 
 const ROLE_OPTIONS = [
   "ADMIN",
@@ -24,6 +29,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
 
   useEffect(() => {
     if (userData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         username: userData.username || "",
         email: userData.email || "",
@@ -74,6 +80,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
     if (form.password.trim()) {
       payload.password = form.password;
     }
+
     try {
       if (isEdit) {
         await api.put("/users/" + userData._id, payload);
@@ -89,8 +96,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
   return (
     <>
       <div className="modal-backdrop fade show"></div>
-
-      <div className="modal fade show d-block shadow">
+      <div className="modal fade show d-block">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header text-light bg-dark bg-gradient p-4">
@@ -101,39 +107,28 @@ export default function UserForm({ onClose, showModal, userData = null }) {
             </div>
 
             <div className="modal-body px-5">
-              <div className="mb-3">
-                <label className="form-label">Username</label>
-                <input
-                  className="form-control"
-                  name="username"
-                  value={form.username}
-                  onChange={onChangeHandler}
-                />
-              </div>
+              <FormField
+                label="Username"
+                name="username"
+                value={form.username}
+                onChange={onChangeHandler}
+              />
 
-              <div className="mb-3">
-                <label className="form-label">Email</label>
-                <input
-                  className="form-control"
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={onChangeHandler}
-                />
-              </div>
+              <FormField
+                label="Email"
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={onChangeHandler}
+              />
 
-              <div className="mb-3">
-                <label className="form-label">
-                  Password {isEdit && "(Leave blank to keep unchanged)"}
-                </label>
-                <input
-                  className="form-control"
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={onChangeHandler}
-                />
-              </div>
+              <FormField
+                label={`Password ${isEdit ? "(Leave blank to keep unchanged)" : ""}`}
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={onChangeHandler}
+              />
 
               <div className="mb-3">
                 <label className="form-label">Role</label>
