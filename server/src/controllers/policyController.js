@@ -28,39 +28,49 @@ exports.createPolicy = async (req, res) => {
     });
     res.status(201).json(policy);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to create policy" });
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.getPolicies = async (req, res) => {
-  const policies = await Policy.find()
-    .populate("approvedBy", "username")
-    .populate("createdBy", "username");
-  res.json(policies);
+  try {
+    const policies = await Policy.find()
+      .populate("approvedBy", "username")
+      .populate("createdBy", "username");
+    res.json(policies);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 exports.getPolicyById = async (req, res) => {
-  const policy = await Policy.findById(req.params.id);
-  if (!policy) return res.status(404).json({ message: "Policy not found" });
-  res.json(policy);
+  try {
+    const policy = await Policy.findById(req.params.id);
+    if (!policy) return res.status(404).json({ message: "Policy not found" });
+    res.json(policy);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 exports.updatePolicy = async (req, res) => {
-  const policy = await Policy.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.json(policy);
-};
-
-exports.deletePolicy = async (req, res) => {
-  await Policy.findByIdAndDelete(req.params.id);
-  res.json({ message: "Policy deleted" });
+  try {
+    const policy = await Policy.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.json(policy);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 exports.approvePolicy = async (req, res) => {
-  const { policyId } = req.params;
-  const userId = req.user._id;
-  const allocation = await allocateTreaties(policyId, userId);
-  res.json(allocation);
+  try {
+    const { policyId } = req.params;
+    const userId = req.user._id;
+    const allocation = await allocateTreaties(policyId, userId);
+    res.json(allocation);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

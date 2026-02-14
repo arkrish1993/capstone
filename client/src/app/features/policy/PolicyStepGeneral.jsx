@@ -1,7 +1,7 @@
 import {
   POLICY_INSURED_TYPE_OPTIONS,
   POLICY_LOB_OPTIONS,
-} from "../../shared/constants";
+} from "../../common/constants";
 import FormField from "../../shared/FormField";
 
 const PolicyStepGeneral = ({ data, onNext, onChange, onCancel }) => {

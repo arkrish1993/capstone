@@ -1,18 +1,15 @@
-/**
- * TO DO:
- * 1. Error styling and alerts
- * 2. Remove dark footer styling
- */
 import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
 import FormField from "../../shared/FormField";
 import {
   USER_PERMISSION_OPTIONS,
   USER_ROLE_OPTIONS,
-} from "../../shared/constants";
+} from "../../common/constants";
+import Alert from "../../shared/Alert";
 
 export default function UserForm({ onClose, showModal, userData = null }) {
   const isEdit = !!userData;
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [form, setForm] = useState({
     username: "",
@@ -90,14 +87,20 @@ export default function UserForm({ onClose, showModal, userData = null }) {
       } else {
         await api.post("/users/create", payload);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      setAlertMessage(error.message);
     }
     onClose();
   };
 
   return (
     <>
+      {!!alertMessage && (
+        <Alert
+          alertMessage={alertMessage}
+          onDismiss={() => setAlertMessage("")}
+        />
+      )}
       <div className="modal-backdrop fade show"></div>
       <div className="modal fade show d-block">
         <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -164,26 +167,31 @@ export default function UserForm({ onClose, showModal, userData = null }) {
                 </div>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Permissions</label>
-                <div className="d-flex">
-                  {USER_PERMISSION_OPTIONS.map((p) => (
-                    <div key={p} className="form-check me-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={form.permissions.includes(p)}
-                        onChange={() => togglePermission(p)}
-                      />
-                      <label className="form-check-label">{p}</label>
-                    </div>
-                  ))}
+              {!!form.role && (
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Permissions</label>
+                  <div className="d-flex">
+                    {USER_PERMISSION_OPTIONS[form.role].map((p) => (
+                      <div key={p} className="form-check me-3">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={form.permissions.includes(p)}
+                          onChange={() => togglePermission(p)}
+                        />
+                        <label className="form-check-label">{p}</label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            <div className="modal-footer text-light bg-dark bg-gradient px-4">
-              <button className="btn btn-secondary" onClick={onClose}>
+            <div className="d-flex justify-content-end text-light p-4 pt-2">
+              <button
+                className="btn btn-outline-secondary me-3"
+                onClick={onClose}
+              >
                 Cancel
               </button>
               <button

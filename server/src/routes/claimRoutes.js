@@ -22,12 +22,6 @@ router.get(
   authorize("CLAIMS_ADJUSTER"),
   claimController.getClaimById,
 );
-router.delete(
-  "/:id",
-  protect,
-  authorize("CLAIMS_ADJUSTER"),
-  claimController.deleteClaim,
-);
 router.patch(
   "/:id/status",
   protect,

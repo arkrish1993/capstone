@@ -13,12 +13,12 @@ export const USER_ROLE_OPTIONS = [
   "REINSURANCE_ANALYST",
 ];
 
-export const USER_PERMISSION_OPTIONS = [
-  "CREATE",
-  "UPDATE",
-  "DELETE",
-  "APPROVE",
-];
+export const USER_PERMISSION_OPTIONS = {
+  ADMIN: ["CREATE", "UPDATE", "DELETE"],
+  UNDERWRITER: ["CREATE", "UPDATE", "APPROVE"],
+  CLAIMS_ADJUSTER: ["CREATE", "UPDATE", "APPROVE"],
+  REINSURANCE_ANALYST: ["CREATE", "UPDATE", "APPROVE"],
+};
 
 export const POLICY_TABLE_COLUMNS = [
   { key: "policyNumber", label: "Policy Number" },

@@ -12,6 +12,10 @@ const getRerouteURL = (role) => {
       return "/admin";
     case "UNDERWRITER":
       return "/policy";
+    case "CLAIMS_ADJUSTER":
+      return "/claim";
+    case "REINSURANCE_ANALYST":
+      return "/treaty";
     default:
       return "/error";
   }
@@ -30,6 +34,7 @@ export default function Login() {
       setAuthError(null);
       setIsLoading(true);
       const res = await api.post("/auth/login", form);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", res.data.token);
       setLoginCredentials(res.data);
       navigate(getRerouteURL(res.data.user?.role));

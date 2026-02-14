@@ -28,12 +28,6 @@ router.put(
   authorize("UNDERWRITER"),
   policyController.updatePolicy,
 );
-router.delete(
-  "/:id",
-  protect,
-  authorize("UNDERWRITER"),
-  policyController.deletePolicy,
-);
 router.post(
   "/:policyId/approve",
   protect,

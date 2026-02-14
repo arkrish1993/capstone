@@ -1,11 +1,3 @@
-/**
- * TO DO:
- * 1. Error handling and success alerts
- * 2. Loading spinner for modal buttons
- * 3. Validations for modal
- * 4. Disable save button for create
- * 5. Implement permission based check
- */
 import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
 import Loader from "../../shared/Loader";
@@ -14,7 +6,11 @@ import Badge from "../../shared/Badge";
 import ConfirmDialog from "../../shared/ConfirmDialog";
 import DataTable from "../../shared/DataTable";
 import UserForm from "./UserForm";
-import { USER_TABLE_COLUMNS } from "../../shared/constants";
+import { USER_TABLE_COLUMNS } from "../../common/constants";
+import Alert from "../../shared/Alert";
+import { useAuth } from "../../hooks/useAuth";
+import { isAllowed } from "../../common/utils";
+import AppShell from "../../layouts/AppShell";
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
@@ -24,6 +20,13 @@ export default function UserList() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const { loggedInUser } = useAuth();
+
+  const isCreateAllowed = isAllowed(loggedInUser?.user?.permissions, "CREATE");
+  const isEditAllowed = isAllowed(loggedInUser?.user?.permissions, "UPDATE");
+  const isDeleteAllowed = isAllowed(loggedInUser?.user?.permissions, "DELETE");
 
   const fetchUsers = async () => {
     try {
@@ -60,8 +63,8 @@ export default function UserList() {
     try {
       await api.delete(`/users/${userToDelete._id}`);
       fetchUsers();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      setAlertMessage(error.message);
     } finally {
       setShowDeleteConfirmModal(false);
       setUserToDelete(null);
@@ -90,14 +93,22 @@ export default function UserList() {
   }
 
   return (
-    <>
+    <AppShell hideSideBar="true">
+      {!!alertMessage && (
+        <Alert
+          alertMessage={alertMessage}
+          onDismiss={() => setAlertMessage("")}
+        />
+      )}
       <div className="card shadow-sm">
         <div className="card-header d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Users</h5>
-          <button className="btn btn-success" onClick={onCreate}>
-            <i className="bi bi-plus-lg me-1"></i>
-            Create User
-          </button>
+          {isCreateAllowed && (
+            <button className="btn btn-success" onClick={onCreate}>
+              <i className="bi bi-plus-lg me-1"></i>
+              Create User
+            </button>
+          )}
         </div>
 
         <DataTable
@@ -113,24 +124,29 @@ export default function UserList() {
               <td>
                 <Badge type={user.status} badgeText={user.status} />
               </td>
+
               <td>
                 {!user.isRootUser && (
                   <>
-                    <button
-                      className="btn btn-outline-success btn-sm me-2"
-                      onClick={() => onEdit(user)}
-                      title="Edit"
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </button>
+                    {isEditAllowed && (
+                      <button
+                        className="btn btn-outline-success btn-sm me-2"
+                        onClick={() => onEdit(user)}
+                        title="Edit"
+                      >
+                        <i className="bi bi-pencil-square"></i>
+                      </button>
+                    )}
 
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() => onDeleteClick(user)}
-                      title="Delete"
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
+                    {isDeleteAllowed && (
+                      <button
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => onDeleteClick(user)}
+                        title="Delete"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    )}
                   </>
                 )}
               </td>
@@ -154,6 +170,6 @@ export default function UserList() {
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />
-    </>
+    </AppShell>
   );
 }

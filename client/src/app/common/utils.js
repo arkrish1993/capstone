@@ -22,3 +22,7 @@ export const toYYYYMMDD = (dateString) => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+
+export const isAllowed = (permissions, action) => {
+  return permissions?.includes(action);
+};

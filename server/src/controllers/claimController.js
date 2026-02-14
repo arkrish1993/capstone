@@ -25,8 +25,3 @@ exports.updateClaimStatus = async (req, res) => {
   );
   res.json(claim);
 };
-
-exports.deleteClaim = async (req, res) => {
-  await Claim.findByIdAndDelete(req.params.id);
-  res.json({ message: "Claim deleted" });
-};

@@ -17,9 +17,9 @@ export default function ConfirmDialog({
               <h5 className="modal-title">{title}</h5>
             </div>
             <p className="p-3">{message}</p>
-            <div className="modal-footer text-light bg-dark bg-gradient px-3">
+            <div className="d-flex justify-content-end text-light p-4 pt-1">
               <button
-                className="btn btn-secondary btn-sm me-2"
+                className="btn btn-outline-secondary btn-sm me-2"
                 onClick={onCancel}
               >
                 Cancel

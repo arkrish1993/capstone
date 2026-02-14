@@ -7,7 +7,7 @@ import PolicyStepReview from "./PolicyStepReview";
 import AppShell from "../../layouts/AppShell";
 import PolicyWizardBreadcrumb from "./PolicyWizardBreadcrumb";
 import Loader from "../../shared/Loader";
-import { toYYYYMMDD } from "../../shared/utils";
+import { toYYYYMMDD } from "../../common/utils";
 
 const CreatePolicyWizard = ({ mode }) => {
   const { policyId } = useParams();

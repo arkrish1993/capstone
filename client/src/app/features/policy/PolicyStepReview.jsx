@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import api from "../../services/apiClient";
-import { convertToCurrency, toDDMMMYYYY } from "../../shared/utils";
+import { convertToCurrency, toDDMMMYYYY } from "../../common/utils";
+import { useState } from "react";
+import Alert from "../../shared/Alert";
 
 const Row = ({ label, value }) => (
   <div className="row mb-2">
@@ -11,6 +13,7 @@ const Row = ({ label, value }) => (
 
 const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
   const navigate = useNavigate();
+  const [alertMessage, setAlertMessage] = useState("");
 
   const onSave = async () => {
     try {
@@ -19,13 +22,19 @@ const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
       } else {
         await api.post("/policies/", data);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      setAlertMessage(error.message);
     }
   };
 
   return (
     <>
+      {!!alertMessage && (
+        <Alert
+          alertMessage={alertMessage}
+          onDismiss={() => setAlertMessage("")}
+        />
+      )}
       <h4>Review Policy</h4>
       <div className="card border-success shadow-sm p-3 my-3">
         <div className="card-body">
@@ -44,17 +53,19 @@ const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
       </div>
 
       <div className="d-flex justify-content-end pt-2">
-        <button className="btn btn-secondary me-2" onClick={onCancel}>
+        <button className="btn btn-outline-secondary me-2" onClick={onCancel}>
           Cancel
         </button>
-        <button className="btn btn-secondary me-2" onClick={onBack}>
+        <button className="btn btn-outline-secondary me-2" onClick={onBack}>
           Back
         </button>
         <button
-          className="btn btn-warning me-2"
+          className="btn btn-success me-2"
           onClick={() => {
             onSave();
-            navigate("/policy");
+            if (!alertMessage) {
+              navigate("/policy");
+            }
           }}
         >
           Save

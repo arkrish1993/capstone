@@ -5,11 +5,12 @@ import ErrorState from "../../shared/ErrorState";
 import EmptyState from "../../shared/EmptyState";
 import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
-import { POLICY_TABLE_COLUMNS } from "../../shared/constants";
-import { toDDMMMYYYY } from "../../shared/utils";
+import { POLICY_TABLE_COLUMNS } from "../../common/constants";
+import { toDDMMMYYYY } from "../../common/utils";
 import { useNavigate } from "react-router-dom";
+import AppShell from "../../layouts/AppShell";
 
-export default function UserList() {
+export default function PolicyList() {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -54,7 +55,7 @@ export default function UserList() {
   }
 
   return (
-    <>
+    <AppShell hideSideBar="true">
       <div className="card shadow-sm">
         <div className="card-header d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Policies</h5>
@@ -117,6 +118,6 @@ export default function UserList() {
           />
         )}
       </div>
-    </>
+    </AppShell>
   );
 }
