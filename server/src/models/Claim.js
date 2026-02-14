@@ -32,8 +32,8 @@ const ClaimSchema = new Schema(
 
     status: {
       type: String,
-      enum: ["SUBMITTED", "IN_REVIEW", "APPROVED", "REJECTED", "SETTLED"],
-      default: "SUBMITTED",
+      enum: ["IN_REVIEW", "APPROVED", "REJECTED", "SETTLED"],
+      default: "IN_REVIEW",
     },
 
     incidentDate: {

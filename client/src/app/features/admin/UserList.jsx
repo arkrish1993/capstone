@@ -127,7 +127,7 @@ export default function UserList() {
 
               <td>
                 {!user.isRootUser && (
-                  <>
+                  <div className="d-flex justify-content-end">
                     {isEditAllowed && (
                       <button
                         className="btn btn-outline-success btn-sm me-2"
@@ -147,7 +147,7 @@ export default function UserList() {
                         <i className="bi bi-trash"></i>
                       </button>
                     )}
-                  </>
+                  </div>
                 )}
               </td>
             </tr>
@@ -155,13 +155,11 @@ export default function UserList() {
         />
       </div>
 
-      {showModal && (
-        <UserForm
-          onClose={() => onModalClose(true)}
-          showModal={showModal}
-          userData={selectedItem}
-        />
-      )}
+      <UserForm
+        onClose={() => onModalClose(true)}
+        showModal={showModal}
+        userData={selectedItem}
+      />
 
       <ConfirmDialog
         showModal={showDeleteConfirmModal}

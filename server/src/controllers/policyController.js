@@ -55,8 +55,18 @@ exports.getPolicyById = async (req, res) => {
 
 exports.updatePolicy = async (req, res) => {
   try {
+    const oldValue = await Policy.findById(req.params.id);
     const policy = await Policy.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+    });
+    createAuditLog({
+      entityType: "POLICY",
+      entityId: policy._id,
+      action: "UPDATE",
+      oldValue,
+      newValue: policy,
+      performedBy: req.user._id,
+      ipAddress: await getClientIp(req),
     });
     res.json(policy);
   } catch (error) {

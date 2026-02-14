@@ -26,3 +26,10 @@ export const toYYYYMMDD = (dateString) => {
 export const isAllowed = (permissions, action) => {
   return permissions?.includes(action);
 };
+
+export const getStatus = (expiryDate, currentStatus) => {
+  if (expiryDate) {
+    return new Date() > new Date(expiryDate) ? "EXPIRED" : currentStatus;
+  }
+  return "EXPIRED";
+};

@@ -1,3 +1,15 @@
+export const BadgeColorMap = {
+  INACTIVE: "secondary",
+  ACTIVE: "success",
+  DRAFT: "secondary",
+  APPROVED: "success",
+  REJECTED: "danger",
+  EXPIRED: "secondary",
+  SUBMITTED: "secondary",
+  IN_REVIEW: "primary",
+  SETTLED: "secondary",
+};
+
 export const USER_TABLE_COLUMNS = [
   { key: "name", label: "Name" },
   { key: "email", label: "Email" },
@@ -39,3 +51,15 @@ export const POLICY_TABLE_COLUMNS = [
 export const POLICY_INSURED_TYPE_OPTIONS = ["INDIVIDUAL", "CORPORATE"];
 
 export const POLICY_LOB_OPTIONS = ["HEALTH", "MOTOR", "LIFE", "PROPERTY"];
+
+export const CLAIM_TABLE_COLUMNS = [
+  { key: "claimNumber", label: "Claim Number" },
+  { key: "policyId", label: "Policy ID" },
+  { key: "claimAmount", label: "Claim Amount" },
+  { key: "approvedAmount", label: "Approved Amount" },
+  { key: "status", label: "Status" },
+  { key: "incidentDate", label: "Incident Date" },
+  { key: "reportedDate", label: "Reported Date" },
+  { key: "handledBy", label: "Handled By" },
+  { key: "actions", label: "Actions" },
+];

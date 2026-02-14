@@ -16,17 +16,11 @@ router.get(
   authorize("CLAIMS_ADJUSTER"),
   claimController.getClaims,
 );
-router.get(
+router.put(
   "/:id",
   protect,
   authorize("CLAIMS_ADJUSTER"),
-  claimController.getClaimById,
-);
-router.patch(
-  "/:id/status",
-  protect,
-  authorize("CLAIMS_ADJUSTER"),
-  claimController.updateClaimStatus,
+  claimController.updateClaim,
 );
 
 module.exports = router;

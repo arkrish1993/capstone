@@ -4,6 +4,7 @@ import AccessDenied from "../shared/AccessDenied";
 import UserList from "../features/admin/UserList";
 import PolicyList from "../features/policy/PolicyList";
 import CreatePolicyWizard from "../features/policy/CreatePolicyWizard";
+import ClaimsList from "../features/claims/ClaimsList";
 
 export default function AppRoutes() {
   return (
@@ -20,6 +21,7 @@ export default function AppRoutes() {
         path="/policy/edit/:policyId"
         element={<CreatePolicyWizard mode="edit" />}
       />
+      <Route path="/claim" element={<ClaimsList />} />
       <Route path="/error" element={<AccessDenied />} />
     </Routes>
   );

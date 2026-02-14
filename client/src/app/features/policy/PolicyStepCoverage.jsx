@@ -12,7 +12,7 @@ const PolicyStepCoverage = ({ data, onNext, onBack, onChange, onCancel }) => {
         value={data.sumInsured}
         min={0}
         placeholder="Enter sum insured"
-        onChange={(e) => onChange({ sumInsured: Number(e.target.value) })}
+        onChange={(e) => onChange({ sumInsured: e.target.value })}
       />
       <FormField
         type="number"
@@ -21,7 +21,7 @@ const PolicyStepCoverage = ({ data, onNext, onBack, onChange, onCancel }) => {
         value={data.premium}
         min={0}
         placeholder="Enter premium"
-        onChange={(e) => onChange({ premium: Number(e.target.value) })}
+        onChange={(e) => onChange({ premium: e.target.value })}
       />
       <FormField
         type="number"
@@ -30,7 +30,7 @@ const PolicyStepCoverage = ({ data, onNext, onBack, onChange, onCancel }) => {
         value={data.retentionLimit}
         min={0}
         placeholder="Enter retention limit"
-        onChange={(e) => onChange({ retentionLimit: Number(e.target.value) })}
+        onChange={(e) => onChange({ retentionLimit: e.target.value })}
       />
       <FormField
         type="date"

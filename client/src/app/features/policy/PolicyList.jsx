@@ -6,7 +6,7 @@ import EmptyState from "../../shared/EmptyState";
 import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
 import { POLICY_TABLE_COLUMNS } from "../../common/constants";
-import { toDDMMMYYYY } from "../../common/utils";
+import { getStatus, toDDMMMYYYY } from "../../common/utils";
 import { useNavigate } from "react-router-dom";
 import AppShell from "../../layouts/AppShell";
 
@@ -57,7 +57,7 @@ export default function PolicyList() {
   return (
     <AppShell hideSideBar="true">
       <div className="card shadow-sm">
-        <div className="card-header d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
+        <div className="card-header w-100 d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Policies</h5>
           <button className="btn btn-success" onClick={onCreate}>
             <i className="bi bi-plus-lg me-1"></i>
@@ -85,33 +85,40 @@ export default function PolicyList() {
                 <td>₹{policy.premium}</td>
                 <td>₹{policy.retentionLimit}</td>
                 <td>
-                  <Badge type={policy.status} badgeText={policy.status} />
+                  <Badge
+                    type={getStatus(policy.effectiveTo, policy.status)}
+                    badgeText={getStatus(policy.effectiveTo, policy.status)}
+                  />
                 </td>
                 <td>{toDDMMMYYYY(policy.effectiveFrom)}</td>
                 <td>{toDDMMMYYYY(policy.effectiveTo)}</td>
                 <td>{policy.createdBy ? policy.createdBy.username : ""}</td>
                 <td>{policy.appovedBy ? policy.appovedBy.username : "-"}</td>
                 <td>
-                  <>
-                    {!policy.appovedBy && (
-                      <button
-                        className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => onEdit(policy._id)}
-                        title="Edit"
-                      >
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
-                    )}
-                    {!policy.appovedBy && (
-                      <button
-                        className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => submitForApproval(policy._id)}
-                        title="Submit for approval"
-                      >
-                        <i className="bi bi-check-circle"></i>
-                      </button>
-                    )}
-                  </>
+                  <div className="d-flex justify-content-end">
+                    {!policy.appovedBy &&
+                      getStatus(policy.effectiveTo, policy.status) !==
+                        "EXPIRED" && (
+                        <button
+                          className="btn btn-outline-success btn-sm me-2"
+                          onClick={() => onEdit(policy._id)}
+                          title="Edit"
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </button>
+                      )}
+                    {!policy.appovedBy &&
+                      getStatus(policy.effectiveTo, policy.status) !==
+                        "EXPIRED" && (
+                        <button
+                          className="btn btn-outline-success btn-sm me-2"
+                          onClick={() => submitForApproval(policy._id)}
+                          title="Submit for approval"
+                        >
+                          <i className="bi bi-check-circle"></i>
+                        </button>
+                      )}
+                  </div>
                 </td>
               </tr>
             )}

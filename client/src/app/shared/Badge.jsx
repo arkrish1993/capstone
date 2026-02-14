@@ -1,14 +1,8 @@
-const statusMap = {
-  INACTIVE: "secondary",
-  ACTIVE: "success",
-  DRAFT: "secondary",
-  REJECTED: "danger",
-  APPROVED: "primary",
-};
+import { BadgeColorMap } from "../common/constants";
 
 export default function Badge({ type, badgeText = "" }) {
   return (
-    <span className={`badge bg-${statusMap[type] || type || "secondary"}`}>
+    <span className={`badge bg-${BadgeColorMap[type] || type}`}>
       {badgeText}
     </span>
   );
