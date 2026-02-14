@@ -6,12 +6,14 @@ import EmptyState from "../../shared/EmptyState";
 import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
 import { POLICY_TABLE_COLUMNS } from "../../shared/constants";
-import { convertToDate } from "../../shared/utils";
+import { toDDMMMYYYY } from "../../shared/utils";
+import { useNavigate } from "react-router-dom";
 
-export default function UserList({ setSelectedItem }) {
+export default function UserList() {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
@@ -30,11 +32,11 @@ export default function UserList({ setSelectedItem }) {
   }, []);
 
   const onCreate = () => {
-    setSelectedItem(null);
+    navigate("/policy/create");
   };
 
-  const onEdit = (policy) => {
-    setSelectedItem(policy);
+  const onEdit = (policyId) => {
+    navigate(`/policy/edit/${policyId}`);
   };
 
   const submitForApproval = (policyId) => {
@@ -84,8 +86,8 @@ export default function UserList({ setSelectedItem }) {
                 <td>
                   <Badge type={policy.status} badgeText={policy.status} />
                 </td>
-                <td>{convertToDate(policy.effectiveFrom)}</td>
-                <td>{convertToDate(policy.effectiveTo)}</td>
+                <td>{toDDMMMYYYY(policy.effectiveFrom)}</td>
+                <td>{toDDMMMYYYY(policy.effectiveTo)}</td>
                 <td>{policy.createdBy ? policy.createdBy.username : ""}</td>
                 <td>{policy.appovedBy ? policy.appovedBy.username : "-"}</td>
                 <td>
@@ -93,7 +95,7 @@ export default function UserList({ setSelectedItem }) {
                     {!policy.appovedBy && (
                       <button
                         className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => onEdit(policy)}
+                        onClick={() => onEdit(policy._id)}
                         title="Edit"
                       >
                         <i className="bi bi-pencil-square"></i>

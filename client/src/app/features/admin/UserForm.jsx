@@ -1,6 +1,7 @@
 /**
  * TO DO:
  * 1. Error styling and alerts
+ * 2. Remove dark footer styling
  */
 import { useEffect, useState } from "react";
 import api from "../../services/apiClient";

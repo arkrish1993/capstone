@@ -35,3 +35,7 @@ export const POLICY_TABLE_COLUMNS = [
   { key: "approvedBy", label: "Approved By" },
   { key: "actions", label: "Actions" },
 ];
+
+export const POLICY_INSURED_TYPE_OPTIONS = ["INDIVIDUAL", "CORPORATE"];
+
+export const POLICY_LOB_OPTIONS = ["HEALTH", "MOTOR", "LIFE", "PROPERTY"];
