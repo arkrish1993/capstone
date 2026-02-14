@@ -6,6 +6,17 @@ import Alert from "../../shared/Alert";
 import Loader from "../../shared/Loader";
 import { useAuth } from "../../hooks/useAuth";
 
+const getRerouteURL = (role) => {
+  switch (role) {
+    case "ADMIN":
+      return "/admin";
+    case "UNDERWRITER":
+      return "/policy";
+    default:
+      return "/error";
+  }
+};
+
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState({});
@@ -21,11 +32,7 @@ export default function Login() {
       const res = await api.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       setLoginCredentials(res.data);
-      if (res?.data?.user?.role === "ADMIN") {
-        navigate("/admin");
-      } else {
-        navigate("/error");
-      }
+      navigate(getRerouteURL(res.data.user?.role));
       setIsLoading(false);
     } catch (err) {
       setAuthError(err);

@@ -12,14 +12,16 @@ import Loader from "../../shared/Loader";
 import ErrorState from "../../shared/ErrorState";
 import Badge from "../../shared/Badge";
 import ConfirmDialog from "../../shared/ConfirmDialog";
+import DataTable from "../../shared/DataTable";
 import UserForm from "./UserForm";
+import { USER_TABLE_COLUMNS } from "../../shared/constants";
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
@@ -41,11 +43,11 @@ export default function UserList() {
 
   const onCreate = () => {
     setShowModal(true);
-    setSelectedUser(null);
+    setSelectedItem(null);
   };
 
   const onEdit = (user) => {
-    setSelectedUser(user);
+    setSelectedItem(user);
     setShowModal(true);
   };
 
@@ -56,7 +58,7 @@ export default function UserList() {
 
   const confirmDelete = async () => {
     try {
-      await api.delete("/users/" + userToDelete._id);
+      await api.delete(`/users/${userToDelete._id}`);
       fetchUsers();
     } catch (err) {
       console.log(err);
@@ -73,7 +75,7 @@ export default function UserList() {
 
   const onModalClose = (reload = false) => {
     setShowModal(false);
-    setSelectedUser(null);
+    setSelectedItem(null);
     if (reload) fetchUsers();
   };
 
@@ -98,62 +100,50 @@ export default function UserList() {
           </button>
         </div>
 
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead className="table-light">
-              <tr height="60" className="align-middle">
-                <th className="bg-dark bg-gradient text-white">Name</th>
-                <th className="bg-dark bg-gradient text-white">Email</th>
-                <th className="bg-dark bg-gradient text-white">Role</th>
-                <th className="bg-dark bg-gradient text-white">Status</th>
-                <th className="bg-dark bg-gradient text-white">Actions</th>
-              </tr>
-            </thead>
+        <DataTable
+          columns={USER_TABLE_COLUMNS}
+          data={users}
+          renderRow={(user) => (
+            <tr key={user._id} height="50" className="align-middle">
+              <td>{user.username}</td>
+              <td>{user.email}</td>
+              <td>
+                <Badge type="dark" badgeText={user.role} />
+              </td>
+              <td>
+                <Badge type={user.status} badgeText={user.status} />
+              </td>
+              <td>
+                {!user.isRootUser && (
+                  <>
+                    <button
+                      className="btn btn-outline-success btn-sm me-2"
+                      onClick={() => onEdit(user)}
+                      title="Edit"
+                    >
+                      <i className="bi bi-pencil-square"></i>
+                    </button>
 
-            <tbody>
-              {users.map((user) => (
-                <tr key={user._id} height="50" className="align-middle">
-                  <td>{user.username}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    <Badge type="dark" badgeText={user.role} />
-                  </td>
-                  <td>
-                    <Badge type={user.status} badgeText={user.status} />
-                  </td>
-                  <td>
-                    {!user.isRootUser && (
-                      <>
-                        <button
-                          className="btn btn-outline-success btn-sm me-2"
-                          onClick={() => onEdit(user)}
-                          title="Edit User"
-                        >
-                          <i className="bi bi-pencil-square"></i>
-                        </button>
-
-                        <button
-                          className="btn btn-outline-danger btn-sm"
-                          onClick={() => onDeleteClick(user)}
-                          title="Delete User"
-                        >
-                          <i className="bi bi-trash"></i>
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => onDeleteClick(user)}
+                      title="Delete"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </>
+                )}
+              </td>
+            </tr>
+          )}
+        />
       </div>
 
       {showModal && (
         <UserForm
           onClose={() => onModalClose(true)}
           showModal={showModal}
-          userData={selectedUser}
+          userData={selectedItem}
         />
       )}
 

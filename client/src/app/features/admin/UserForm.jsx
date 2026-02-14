@@ -1,20 +1,14 @@
 /**
  * TO DO:
- * 1. Validations for save
- * 2. Error styling and alerts
+ * 1. Error styling and alerts
  */
 import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
 import FormField from "../../shared/FormField";
-
-const ROLE_OPTIONS = [
-  "ADMIN",
-  "UNDERWRITER",
-  "CLAIMS_ADJUSTER",
-  "REINSURANCE_ANALYST",
-];
-
-const PERMISSION_OPTIONS = ["CREATE", "EDIT", "DELETE"];
+import {
+  USER_PERMISSION_OPTIONS,
+  USER_ROLE_OPTIONS,
+} from "../../shared/constants";
 
 export default function UserForm({ onClose, showModal, userData = null }) {
   const isEdit = !!userData;
@@ -53,6 +47,13 @@ export default function UserForm({ onClose, showModal, userData = null }) {
 
   if (!showModal) return null;
 
+  const isActionDisabled = () => {
+    if (!isEdit) {
+      return !form.username || !form.email || !form.password || !form.role;
+    }
+    return false;
+  };
+
   const onChangeHandler = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -84,7 +85,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
 
     try {
       if (isEdit) {
-        await api.put("/users/" + userData._id, payload);
+        await api.put(`/users/${userData._id}`, payload);
       } else {
         await api.post("/users/create", payload);
       }
@@ -104,7 +105,6 @@ export default function UserForm({ onClose, showModal, userData = null }) {
               <h5 className="modal-title">
                 {isEdit ? "Update User" : "Create User"}
               </h5>
-              <button className="btn-close" onClick={onClose}></button>
             </div>
 
             <div className="modal-body px-5">
@@ -117,7 +117,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
 
               <FormField
                 label="Email"
-                type="email"
+                type={"email"}
                 name="email"
                 value={form.email}
                 onChange={onChangeHandler}
@@ -125,7 +125,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
 
               <FormField
                 label={`Password ${isEdit ? "(Leave blank to keep unchanged)" : ""}`}
-                type="password"
+                type={"password"}
                 name="password"
                 value={form.password}
                 onChange={onChangeHandler}
@@ -140,7 +140,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
                   onChange={onChangeHandler}
                 >
                   <option value="">Select Role</option>
-                  {ROLE_OPTIONS.map((role) => (
+                  {USER_ROLE_OPTIONS.map((role) => (
                     <option key={role} value={role}>
                       {role}
                     </option>
@@ -165,17 +165,19 @@ export default function UserForm({ onClose, showModal, userData = null }) {
 
               <div className="mb-3">
                 <label className="form-label fw-semibold">Permissions</label>
-                {PERMISSION_OPTIONS.map((p) => (
-                  <div key={p} className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      checked={form.permissions.includes(p)}
-                      onChange={() => togglePermission(p)}
-                    />
-                    <label className="form-check-label">{p}</label>
-                  </div>
-                ))}
+                <div className="d-flex">
+                  {USER_PERMISSION_OPTIONS.map((p) => (
+                    <div key={p} className="form-check me-3">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        checked={form.permissions.includes(p)}
+                        onChange={() => togglePermission(p)}
+                      />
+                      <label className="form-check-label">{p}</label>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -183,7 +185,11 @@ export default function UserForm({ onClose, showModal, userData = null }) {
               <button className="btn btn-secondary" onClick={onClose}>
                 Cancel
               </button>
-              <button className="btn btn-success" onClick={onSubmitHandler}>
+              <button
+                className="btn btn-success"
+                onClick={onSubmitHandler}
+                disabled={isActionDisabled()}
+              >
                 {isEdit ? "Update" : "Create"}
               </button>
             </div>

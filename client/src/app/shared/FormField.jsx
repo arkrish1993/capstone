@@ -3,7 +3,6 @@ export default function FormField({
   type = "text",
   value,
   onChange,
-  error,
   ...rest
 }) {
   return (
@@ -13,10 +12,9 @@ export default function FormField({
         type={type}
         value={value}
         onChange={onChange}
-        className={`form-control ${error ? "is-invalid" : ""}`}
+        className="form-control"
         {...rest}
       />
-      {error && <div className="invalid-feedback">{error}</div>}
     </div>
   );
 }

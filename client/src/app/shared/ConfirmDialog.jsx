@@ -12,14 +12,19 @@ export default function ConfirmDialog({
       <div className="modal-backdrop fade show"></div>
       <div className="modal fade show d-block">
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content p-4">
-            <h5>{title}</h5>
-            <p>{message}</p>
-            <div className="d-flex justify-content-end">
-              <button className="btn btn-secondary me-2" onClick={onCancel}>
+          <div className="modal-content">
+            <div className="modal-header text-light bg-dark bg-gradient p-3">
+              <h5 className="modal-title">{title}</h5>
+            </div>
+            <p className="p-3">{message}</p>
+            <div className="modal-footer text-light bg-dark bg-gradient px-3">
+              <button
+                className="btn btn-secondary btn-sm me-2"
+                onClick={onCancel}
+              >
                 Cancel
               </button>
-              <button className="btn btn-danger" onClick={onConfirm}>
+              <button className="btn btn-danger btn-sm" onClick={onConfirm}>
                 Confirm
               </button>
             </div>
