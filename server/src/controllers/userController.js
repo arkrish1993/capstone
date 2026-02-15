@@ -24,7 +24,7 @@ exports.createUser = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ isDeleted: false });
     res.json(users);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -59,8 +59,12 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
+  // Soft delete
   try {
-    await User.findByIdAndDelete(req.params.id);
+    await User.findByIdAndUpdate(req.params.id, {
+      status: "INACTIVE",
+      isDeleted: true,
+    });
     createAuditLog({
       entityType: "USER",
       entityId: req.params.id,
@@ -68,7 +72,7 @@ exports.deleteUser = async (req, res) => {
       performedBy: req.user._id,
       ipAddress: await getClientIp(req),
     });
-    res.json({ message: "User deleted" });
+    res.json({ message: "User deleted successfully." });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

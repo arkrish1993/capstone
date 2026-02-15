@@ -16,7 +16,7 @@ export default function PolicyList() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const fetchUsers = async () => {
+  const fetchPolicies = async () => {
     try {
       setLoading(true);
       const res = await api.get("/policies");
@@ -29,7 +29,7 @@ export default function PolicyList() {
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchPolicies();
   }, []);
 
   const onCreate = () => {
@@ -40,8 +40,16 @@ export default function PolicyList() {
     navigate(`/policy/edit/${policyId}`);
   };
 
-  const submitForApproval = (policyId) => {
-    console.log(policyId);
+  const submitForApproval = async (policyId) => {
+    try {
+      setLoading(true);
+      await api.post(`/policies/${policyId}/approve`);
+      fetchPolicies();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -55,7 +63,7 @@ export default function PolicyList() {
   }
 
   return (
-    <AppShell hideSideBar="true">
+    <AppShell>
       <div className="card shadow-sm">
         <div className="card-header w-100 d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Policies</h5>

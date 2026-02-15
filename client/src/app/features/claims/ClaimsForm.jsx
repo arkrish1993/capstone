@@ -96,7 +96,11 @@ export default function ClaimsForm({
           <div className="modal-content">
             <div className="modal-header text-light bg-dark bg-gradient p-4">
               <h5 className="modal-title">
-                {isEdit ? "Update Claim" : "Create Claim"}
+                {isEdit
+                  ? mode === "approve"
+                    ? "Approve Claim"
+                    : "Update Claim"
+                  : "Create Claim"}
               </h5>
             </div>
 

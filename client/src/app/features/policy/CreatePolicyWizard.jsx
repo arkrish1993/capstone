@@ -46,14 +46,14 @@ const CreatePolicyWizard = ({ mode }) => {
 
   if (loading) {
     return (
-      <AppShell hideSideBar={true}>
+      <AppShell>
         <Loader loaderStyle="spinner-grow spinner-grow text-success mt-4 px-3" />
       </AppShell>
     );
   }
 
   return (
-    <AppShell hideSideBar={true}>
+    <AppShell>
       <div className="card m-4 shadow">
         <div className="card-header pt-4 px-4 bg-dark bg-gradient">
           <h3 className="text-white">

@@ -42,6 +42,11 @@ const ReinsurerSchema = new Schema(
       enum: ["ACTIVE", "INACTIVE"],
       default: "ACTIVE",
     },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

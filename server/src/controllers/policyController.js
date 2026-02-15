@@ -1,6 +1,6 @@
 const Policy = require("../models/Policy");
-const { allocateTreaties } = require("../services/helperService");
 const { getClientIp, createAuditLog } = require("../services/helperService");
+const { reinsuranceEngine } = require("../services/reinsuranceEngine");
 
 exports.createPolicy = async (req, res) => {
   try {
@@ -76,11 +76,42 @@ exports.updatePolicy = async (req, res) => {
 
 exports.approvePolicy = async (req, res) => {
   try {
-    const { policyId } = req.params;
+    const { policyNumber } = req.params;
     const userId = req.user._id;
-    const allocation = await allocateTreaties(policyId, userId);
-    res.json(allocation);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    const policy = await Policy.findOne({ policyNumber });
+    const oldValue = policy;
+
+    if (!policy) {
+      return res.status(404).json({ message: "Policy not found" });
+    }
+    if (policy.status !== "DRAFT") {
+      return res.status(400).json({
+        message: `Policy is not in DRAFT state. Current state: ${policy.status}`,
+      });
+    }
+
+    policy.status = "ACTIVE";
+    policy.approvedBy = userId;
+    await policy.save();
+
+    createAuditLog({
+      entityType: "POLICY",
+      entityId: policy._id,
+      action: "APPROVE",
+      oldValue,
+      newValue: policy,
+      performedBy: req.user._id,
+      ipAddress: req.ip,
+    });
+
+    const allocation = await reinsuranceEngine(policy, userId);
+
+    return res.status(200).json({
+      message: "Policy approved successfully",
+      allocation,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

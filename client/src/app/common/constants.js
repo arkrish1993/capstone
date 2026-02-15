@@ -29,7 +29,7 @@ export const USER_PERMISSION_OPTIONS = {
   ADMIN: ["CREATE", "UPDATE", "DELETE"],
   UNDERWRITER: ["CREATE", "UPDATE", "APPROVE"],
   CLAIMS_ADJUSTER: ["CREATE", "UPDATE", "APPROVE"],
-  REINSURANCE_ANALYST: ["CREATE", "UPDATE", "APPROVE"],
+  REINSURANCE_ANALYST: ["CREATE", "UPDATE", "APPROVE", "DELETE"],
 };
 
 export const POLICY_TABLE_COLUMNS = [
@@ -62,4 +62,20 @@ export const CLAIM_TABLE_COLUMNS = [
   { key: "reportedDate", label: "Reported Date" },
   { key: "handledBy", label: "Handled By" },
   { key: "actions", label: "Actions" },
+];
+
+export const REINSURER_TABLE_COLUMNS = [
+  { key: "name", label: "Name" },
+  { key: "code", label: "Code" },
+  { key: "country", label: "Country" },
+  { key: "rating", label: "Rating" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions" },
+];
+
+export const REINSURER_RATING_OPTIONS = ["AAA", "AA", "A", "BBB"];
+
+export const REINSURER_TOPBAR_LINKS = [
+  { label: "Reinsurers", url: "/reinsurer" },
+  { label: "Treaties", url: "/treaty" },
 ];

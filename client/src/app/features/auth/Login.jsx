@@ -15,7 +15,7 @@ const getRerouteURL = (role) => {
     case "CLAIMS_ADJUSTER":
       return "/claim";
     case "REINSURANCE_ANALYST":
-      return "/treaty";
+      return "/reinsurer";
     default:
       return "/error";
   }

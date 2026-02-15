@@ -7,7 +7,7 @@ const AuditLogSchema = new Schema(
     entityType: {
       type: String,
       required: true,
-      enum: ["POLICY", "CLAIM", "TREATY", "USER"],
+      enum: ["POLICY", "CLAIM", "REINSURER", "TREATY", "USER"],
     },
 
     entityId: {

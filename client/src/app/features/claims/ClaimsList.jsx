@@ -103,7 +103,7 @@ export default function ClaimsList() {
   }
 
   return (
-    <AppShell hideSideBar="true">
+    <AppShell>
       {!!alertMessage && (
         <Alert
           alertMessage={alertMessage}
