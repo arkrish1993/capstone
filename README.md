@@ -16,7 +16,7 @@ Build a system that manages insurance policies and claims, and automatically tra
 ---
 
 ## High-Level Architecture
-**Frontend:** React / Angular UI  
+**Frontend:** React 
 **Backend:** Node.js API Gateway  
 
 **Services:**
@@ -26,6 +26,128 @@ Build a system that manages insurance policies and claims, and automatically tra
 - User & Auth Service  
 
 **Database:** MongoDB
+
+---
+# Project Structure
+
+```
+CAPSTONE
+│
+├── client
+│   ├── node_modules
+│   ├── src
+│   │   ├── app
+│   │   │   ├── common
+│   │   │   │   ├── constants.js
+│   │   │   │   └── utils.js
+│   │   │   ├── context
+│   │   │   │   └── AuthContext.jsx
+│   │   │   ├── features
+│   │   │   │   ├── admin
+│   │   │   │   │   ├── UserForm.jsx
+│   │   │   │   │   └── UserList.jsx
+│   │   │   │   ├── auth
+│   │   │   │   │   └── Login.jsx
+│   │   │   │   ├── claims
+│   │   │   │   │   ├── ClaimsForm.jsx
+│   │   │   │   │   ├── ClaimsList.jsx
+│   │   │   │   │   └── ClaimStatusTimeline.jsx
+│   │   │   │   ├── dashboard
+│   │   │   │   │   ├── charts
+│   │   │   │   │   └── AnalyticsDashboard.jsx
+│   │   │   │   ├── policy
+│   │   │   │   │   ├── CreatePolicyWizard.jsx
+│   │   │   │   │   ├── PolicyList.jsx
+│   │   │   │   │   ├── PolicyStepCoverage.jsx
+│   │   │   │   │   ├── PolicyStepGeneral.jsx
+│   │   │   │   │   ├── PolicyStepReview.jsx
+│   │   │   │   │   └── PolicyWizardBreadcrumb.jsx
+│   │   │   │   ├── reinsurer
+│   │   │   │   │   ├── ReinsurerForm.jsx
+│   │   │   │   │   └── ReinsurerList.jsx
+│   │   │   │   └── treaty
+│   │   │   │       ├── RiskAllocationView.jsx
+│   │   │   │       ├── TreatyForm.jsx
+│   │   │   │       └── TreatyList.jsx
+│   │   │   ├── hooks
+│   │   │   │   └── useAuth.js
+│   │   │   ├── layouts
+│   │   │   │   ├── TopBar
+│   │   │   │   │   ├── TopBar.css
+│   │   │   │   │   └── TopBar.jsx
+│   │   │   │   └── AppShell.jsx
+│   │   │   ├── routes
+│   │   │   │   └── AppRoutes.jsx
+│   │   │   ├── services
+│   │   │   │   └── apiClient.js
+│   │   │   ├── shared
+│   │   │   │   ├── AccessDenied.jsx
+│   │   │   │   ├── Alert.jsx
+│   │   │   │   ├── Badge.jsx
+│   │   │   │   ├── ChartCard.jsx
+│   │   │   │   ├── ConfirmDialog.jsx
+│   │   │   │   ├── DataTable.jsx
+│   │   │   │   ├── EmptyState.jsx
+│   │   │   │   ├── ErrorBoundary.jsx
+│   │   │   │   ├── ErrorState.jsx
+│   │   │   │   ├── FormField.jsx
+│   │   │   │   └── Loader.jsx
+│   │   │   ├── assets
+│   │   │   ├── App.jsx
+│   │   │   └── main.jsx
+│   │   ├── .env
+│   │   ├── eslint.config.js
+│   │   └── index.html
+│
+├── server
+│   ├── node_modules
+│   ├── scripts
+│   │   └── createAdmin.js
+│   ├── src
+│   │   ├── config
+│   │   │   └── db.js
+│   │   ├── controllers
+│   │   │   ├── authController.js
+│   │   │   ├── claimController.js
+│   │   │   ├── dashboardController.js
+│   │   │   ├── policyController.js
+│   │   │   ├── reinsurerController.js
+│   │   │   ├── riskAllocationController.js
+│   │   │   ├── treatyController.js
+│   │   │   └── userController.js
+│   │   ├── middleware
+│   │   │   ├── authMiddleware.js
+│   │   │   └── roleGuard.js
+│   │   ├── models
+│   │   │   ├── AuditLog.js
+│   │   │   ├── Claim.js
+│   │   │   ├── Policy.js
+│   │   │   ├── Reinsurer.js
+│   │   │   ├── RiskAllocation.js
+│   │   │   ├── Treaty.js
+│   │   │   └── User.js
+│   │   ├── routes
+│   │   │   ├── authRoutes.js
+│   │   │   ├── claimRoutes.js
+│   │   │   ├── dashboardRoutes.js
+│   │   │   ├── policyRoutes.js
+│   │   │   ├── reinsurerRoutes.js
+│   │   │   ├── riskAllocationRoutes.js
+│   │   │   ├── treatyRoutes.js
+│   │   │   └── userRoutes.js
+│   │   ├── services
+│   │   │   ├── helperService.js
+│   │   │   └── reinsuranceEngine.js
+│   │   ├── app.js
+│   │   └── server.js
+│   ├── .env
+│   ├── package-lock.json
+│   └── package.json
+│
+├── .gitignore
+└── README.md
+```
+
 
 ---
 
@@ -165,3 +287,5 @@ src/
 - Advanced Analytics Dashboards
 - Third-Party API Integrations
 - Cloud Deployment & CI/CD Pipelines
+
+
