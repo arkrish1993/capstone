@@ -50,7 +50,7 @@ export const POLICY_TABLE_COLUMNS = [
 
 export const POLICY_INSURED_TYPE_OPTIONS = ["INDIVIDUAL", "CORPORATE"];
 
-export const POLICY_LOB_OPTIONS = ["HEALTH", "MOTOR", "LIFE", "PROPERTY"];
+export const LOB_OPTIONS = ["HEALTH", "MOTOR", "LIFE", "PROPERTY"];
 
 export const CLAIM_TABLE_COLUMNS = [
   { key: "claimNumber", label: "Claim Number" },
@@ -65,8 +65,8 @@ export const CLAIM_TABLE_COLUMNS = [
 ];
 
 export const REINSURER_TABLE_COLUMNS = [
+  { key: "code", label: "ID" },
   { key: "name", label: "Name" },
-  { key: "code", label: "Code" },
   { key: "country", label: "Country" },
   { key: "rating", label: "Rating" },
   { key: "status", label: "Status" },
@@ -75,7 +75,22 @@ export const REINSURER_TABLE_COLUMNS = [
 
 export const REINSURER_RATING_OPTIONS = ["AAA", "AA", "A", "BBB"];
 
-export const REINSURER_TOPBAR_LINKS = [
+export const REINSURER_ANALYST_PORTAL_LINKS = [
   { label: "Reinsurers", url: "/reinsurer" },
   { label: "Treaties", url: "/treaty" },
+];
+
+export const TREATY_TYPE_OPTIONS = ["QUOTA_SHARE", "SURPLUS"];
+
+export const TREATY_TABLE_COLUMNS = [
+  { key: "treatyName", label: "Treaty Name" },
+  { key: "treatyType", label: "Type" },
+  { key: "reinsurerId", label: "Reinsurer ID" },
+  { key: "sharePercentage", label: "Share %" },
+  { key: "retentionLimit", label: "Retention Limit" },
+  { key: "treatyLimit", label: "Treaty Limit" },
+  { key: "effectiveFrom", label: "Effective From" },
+  { key: "effectiveTo", label: "Effective To" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions" },
 ];

@@ -14,7 +14,6 @@ export default function ReinsurerForm({
 
   const [form, setForm] = useState({
     name: "",
-    code: "",
     country: "",
     rating: "",
     contactEmail: "",
@@ -26,7 +25,6 @@ export default function ReinsurerForm({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         name: reinsurerData.name || "",
-        code: reinsurerData.code || "",
         country: reinsurerData.country || "",
         rating: reinsurerData.rating || "",
         contactEmail: reinsurerData.contactEmail || "",
@@ -35,7 +33,6 @@ export default function ReinsurerForm({
     } else {
       setForm({
         name: "",
-        code: "",
         country: "",
         rating: "",
         contactEmail: "",
@@ -102,14 +99,7 @@ export default function ReinsurerForm({
                 label="Name"
                 name="name"
                 value={form.name}
-                onChange={onChangeHandler}
-              />
-
-              <FormField
-                label="Code"
-                name="code"
-                value={form.code}
-                disabled={true}
+                placeholder="Enter name"
                 onChange={onChangeHandler}
               />
 
@@ -117,6 +107,7 @@ export default function ReinsurerForm({
                 label="Country"
                 name="country"
                 value={form.country}
+                placeholder="Enter country"
                 onChange={onChangeHandler}
               />
 
@@ -142,6 +133,7 @@ export default function ReinsurerForm({
                 type="email"
                 name="contactEmail"
                 value={form.contactEmail}
+                placeholder="Enter email"
                 onChange={onChangeHandler}
               />
 

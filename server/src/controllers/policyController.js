@@ -34,6 +34,16 @@ exports.createPolicy = async (req, res) => {
 
 exports.getPolicies = async (req, res) => {
   try {
+    const today = new Date();
+    await Policy.updateMany(
+      {
+        effectiveTo: { $lt: today },
+        status: { $ne: "EXPIRED" },
+      },
+      {
+        $set: { status: "EXPIRED" },
+      },
+    );
     const policies = await Policy.find()
       .populate("approvedBy", "username")
       .populate("createdBy", "username");
@@ -76,9 +86,9 @@ exports.updatePolicy = async (req, res) => {
 
 exports.approvePolicy = async (req, res) => {
   try {
-    const { policyNumber } = req.params;
+    const { policyId } = req.params;
     const userId = req.user._id;
-    const policy = await Policy.findOne({ policyNumber });
+    const policy = await Policy.findById(policyId);
     const oldValue = policy;
 
     if (!policy) {
@@ -104,6 +114,7 @@ exports.approvePolicy = async (req, res) => {
       ipAddress: req.ip,
     });
 
+    console.log(policy, userId);
     const allocation = await reinsuranceEngine(policy, userId);
 
     return res.status(200).json({

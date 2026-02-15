@@ -50,7 +50,7 @@ const PolicySchema = new Schema(
 
     status: {
       type: String,
-      enum: ["DRAFT", "ACTIVE", "SUSPENDED", "EXPIRED"],
+      enum: ["DRAFT", "ACTIVE", "EXPIRED"],
       default: "DRAFT",
     },
 

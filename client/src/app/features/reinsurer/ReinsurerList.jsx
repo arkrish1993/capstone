@@ -12,7 +12,7 @@ import { isAllowed } from "../../common/utils";
 import AppShell from "../../layouts/AppShell";
 import {
   REINSURER_TABLE_COLUMNS,
-  REINSURER_TOPBAR_LINKS,
+  REINSURER_ANALYST_PORTAL_LINKS,
 } from "../../common/constants";
 import EmptyState from "../../shared/EmptyState";
 
@@ -98,7 +98,7 @@ export default function ReinsurerList() {
   }
 
   return (
-    <AppShell links={REINSURER_TOPBAR_LINKS}>
+    <AppShell links={REINSURER_ANALYST_PORTAL_LINKS}>
       {!!alertMessage && (
         <Alert
           alertMessage={alertMessage}
@@ -123,16 +123,16 @@ export default function ReinsurerList() {
           <DataTable
             columns={REINSURER_TABLE_COLUMNS}
             data={reinsurers}
-            renderRow={(r) => (
-              <tr key={r._id} height="50" className="align-middle">
-                <td>{r.name}</td>
-                <td>{r.code}</td>
-                <td>{r.country}</td>
+            renderRow={(reinsurer) => (
+              <tr key={reinsurer._id} height="50" className="align-middle">
+                <td>{reinsurer.code}</td>
+                <td>{reinsurer.name}</td>
+                <td>{reinsurer.country}</td>
                 <td>
-                  <Badge type="dark" badgeText={r.rating} />
+                  <Badge type="dark" badgeText={reinsurer.rating} />
                 </td>
                 <td>
-                  <Badge type={r.status} badgeText={r.status} />
+                  <Badge type={reinsurer.status} badgeText={reinsurer.status} />
                 </td>
 
                 <td>
@@ -140,7 +140,7 @@ export default function ReinsurerList() {
                     {isEditAllowed && (
                       <button
                         className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => onEdit(r)}
+                        onClick={() => onEdit(reinsurer)}
                         title="Edit"
                       >
                         <i className="bi bi-pencil-square"></i>
@@ -150,7 +150,7 @@ export default function ReinsurerList() {
                     {isDeleteAllowed && (
                       <button
                         className="btn btn-outline-danger btn-sm"
-                        onClick={() => onDeleteClick(r)}
+                        onClick={() => onDeleteClick(reinsurer)}
                         title="Delete"
                       >
                         <i className="bi bi-trash"></i>

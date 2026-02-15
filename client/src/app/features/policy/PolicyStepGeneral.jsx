@@ -1,6 +1,6 @@
 import {
   POLICY_INSURED_TYPE_OPTIONS,
-  POLICY_LOB_OPTIONS,
+  LOB_OPTIONS,
 } from "../../common/constants";
 import FormField from "../../shared/FormField";
 
@@ -38,7 +38,7 @@ const PolicyStepGeneral = ({ data, onNext, onChange, onCancel }) => {
           onChange={(e) => onChange({ lineOfBusiness: e.target.value })}
         >
           <option value="">Line of Business</option>
-          {POLICY_LOB_OPTIONS.map((lob) => (
+          {LOB_OPTIONS.map((lob) => (
             <option key={lob} value={lob}>
               {lob}
             </option>

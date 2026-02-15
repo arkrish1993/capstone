@@ -6,15 +6,28 @@ import EmptyState from "../../shared/EmptyState";
 import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
 import { POLICY_TABLE_COLUMNS } from "../../common/constants";
-import { getStatus, toDDMMMYYYY } from "../../common/utils";
+import { isAllowed, toDDMMMYYYY } from "../../common/utils";
 import { useNavigate } from "react-router-dom";
 import AppShell from "../../layouts/AppShell";
+import { useAuth } from "../../hooks/useAuth";
+import ConfirmDialog from "../../shared/ConfirmDialog";
 
 export default function PolicyList() {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const navigate = useNavigate();
+
+  const { loggedInUser } = useAuth();
+
+  const isCreateAllowed = isAllowed(loggedInUser?.user?.permissions, "CREATE");
+  const isEditAllowed = isAllowed(loggedInUser?.user?.permissions, "UPDATE");
+  const isApproveAllowed = isAllowed(
+    loggedInUser?.user?.permissions,
+    "APPROVE",
+  );
 
   const fetchPolicies = async () => {
     try {
@@ -40,6 +53,11 @@ export default function PolicyList() {
     navigate(`/policy/edit/${policyId}`);
   };
 
+  const onSubmit = (policy) => {
+    setSelectedItem(policy);
+    setShowConfirmModal(true);
+  };
+
   const submitForApproval = async (policyId) => {
     try {
       setLoading(true);
@@ -48,6 +66,7 @@ export default function PolicyList() {
     } catch (error) {
       setError(error.message);
     } finally {
+      setSelectedItem(null);
       setLoading(false);
     }
   };
@@ -67,10 +86,12 @@ export default function PolicyList() {
       <div className="card shadow-sm">
         <div className="card-header w-100 d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Policies</h5>
-          <button className="btn btn-success" onClick={onCreate}>
-            <i className="bi bi-plus-lg me-1"></i>
-            Create Policy
-          </button>
+          {isCreateAllowed && (
+            <button className="btn btn-success" onClick={onCreate}>
+              <i className="bi bi-plus-lg me-1"></i>
+              Create Policy
+            </button>
+          )}
         </div>
         {!policies.length && (
           <EmptyState title="No data found. Please click on 'Create Policy' to proceed." />
@@ -93,20 +114,17 @@ export default function PolicyList() {
                 <td>₹{policy.premium}</td>
                 <td>₹{policy.retentionLimit}</td>
                 <td>
-                  <Badge
-                    type={getStatus(policy.effectiveTo, policy.status)}
-                    badgeText={getStatus(policy.effectiveTo, policy.status)}
-                  />
+                  <Badge type={policy.status} badgeText={policy.status} />
                 </td>
                 <td>{toDDMMMYYYY(policy.effectiveFrom)}</td>
                 <td>{toDDMMMYYYY(policy.effectiveTo)}</td>
                 <td>{policy.createdBy ? policy.createdBy.username : ""}</td>
-                <td>{policy.appovedBy ? policy.appovedBy.username : "-"}</td>
+                <td>{policy.approvedBy ? policy.approvedBy.username : "-"}</td>
                 <td>
                   <div className="d-flex justify-content-end">
-                    {!policy.appovedBy &&
-                      getStatus(policy.effectiveTo, policy.status) !==
-                        "EXPIRED" && (
+                    {isEditAllowed &&
+                      !policy.approvedBy &&
+                      policy.status !== "EXPIRED" && (
                         <button
                           className="btn btn-outline-success btn-sm me-2"
                           onClick={() => onEdit(policy._id)}
@@ -115,12 +133,12 @@ export default function PolicyList() {
                           <i className="bi bi-pencil-square"></i>
                         </button>
                       )}
-                    {!policy.appovedBy &&
-                      getStatus(policy.effectiveTo, policy.status) !==
-                        "EXPIRED" && (
+                    {isApproveAllowed &&
+                      !policy.approvedBy &&
+                      policy.status !== "EXPIRED" && (
                         <button
                           className="btn btn-outline-success btn-sm me-2"
-                          onClick={() => submitForApproval(policy._id)}
+                          onClick={() => onSubmit(policy)}
                           title="Submit for approval"
                         >
                           <i className="bi bi-check-circle"></i>
@@ -133,6 +151,14 @@ export default function PolicyList() {
           />
         )}
       </div>
+
+      <ConfirmDialog
+        showModal={showConfirmModal}
+        title="Submit for approval"
+        message={`Are you sure you want to submit this policy for approval?`}
+        onConfirm={() => submitForApproval(selectedItem._id)}
+        onCancel={() => setShowConfirmModal(false)}
+      />
     </AppShell>
   );
 }

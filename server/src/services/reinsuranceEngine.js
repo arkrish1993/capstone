@@ -8,7 +8,6 @@ exports.reinsuranceEngine = async (policy, underWriterUserid) => {
   const treaty = await Treaty.findOne({
     status: "ACTIVE",
     applicableLOBs: policy.lineOfBusiness,
-    effectiveFrom: { $lte: new Date() },
     effectiveTo: { $gte: new Date() },
   });
 

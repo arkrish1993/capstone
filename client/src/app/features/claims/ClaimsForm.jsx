@@ -59,7 +59,7 @@ export default function ClaimsForm({
   const onSubmitHandler = async () => {
     setAlertMessage("");
     const payload = {
-      policyId: form.policyId,
+      policyId: form.policyId.toUpperCase(),
       claimAmount: form.claimAmount,
       incidentDate: form.incidentDate,
     };
