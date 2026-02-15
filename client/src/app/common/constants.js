@@ -76,8 +76,9 @@ export const REINSURER_TABLE_COLUMNS = [
 export const REINSURER_RATING_OPTIONS = ["AAA", "AA", "A", "BBB"];
 
 export const REINSURER_ANALYST_PORTAL_LINKS = [
-  { label: "Reinsurers", url: "/reinsurer" },
-  { label: "Treaties", url: "/treaty" },
+  { label: "Reinsurer", url: "/reinsurer" },
+  { label: "Treaty", url: "/treaty" },
+  { label: "View Risk", url: "/risk-view" },
 ];
 
 export const TREATY_TYPE_OPTIONS = ["QUOTA_SHARE", "SURPLUS"];
@@ -93,4 +94,13 @@ export const TREATY_TABLE_COLUMNS = [
   { key: "effectiveTo", label: "Effective To" },
   { key: "status", label: "Status" },
   { key: "actions", label: "Actions" },
+];
+
+export const RISK_ALLOCATION_VIEW_COLUMNS = [
+  { key: "reinsurer", label: "Reinsurer" },
+  { key: "treaty", label: "Treaty" },
+  { key: "retentionLimit", label: "Retention Limit" },
+  { key: "treatyLimit", label: "Treaty Limit" },
+  { key: "allocatedAmount", label: "Allocated Amount" },
+  { key: "allocatedPercentage", label: "Allocated %" },
 ];

@@ -1,15 +1,27 @@
 const RiskAllocation = require("../models/RiskAllocation");
-
-exports.getAllocations = async (req, res) => {
-  const allocations = await RiskAllocation.find()
-    .populate("policyId")
-    .populate("allocations.reinsurerId");
-  res.json(allocations);
-};
+const Policy = require("../models/Policy");
 
 exports.getAllocationByPolicy = async (req, res) => {
-  const allocation = await RiskAllocation.findOne({
-    policyId: req.params.policyId,
-  });
-  res.json(allocation);
+  try {
+    const { policyId } = req.params;
+    const policy = await Policy.findOne({
+      policyNumber: policyId,
+      status: "ACTIVE",
+    });
+    if (!policy) {
+      return res.json({ message: "Policy not found" });
+    }
+    let allocations = await RiskAllocation.find({
+      policyId: policy._id,
+    })
+      .populate("allocations.reinsurerId")
+      .populate("allocations.treatyId");
+    if (allocations.length) {
+      res.json(allocations);
+    } else {
+      res.json({ message: "No risk allocation found." });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

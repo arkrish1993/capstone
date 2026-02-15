@@ -7,6 +7,7 @@ import CreatePolicyWizard from "../features/policy/CreatePolicyWizard";
 import ClaimsList from "../features/claims/ClaimsList";
 import ReinsurerList from "../features/reinsurer/ReinsurerList";
 import TreatyList from "../features/treaty/TreatyList";
+import RiskAllocationView from "../features/treaty/RiskAllocationView";
 
 export default function AppRoutes() {
   return (
@@ -26,6 +27,7 @@ export default function AppRoutes() {
       <Route path="/claim" element={<ClaimsList />} />
       <Route path="/reinsurer" element={<ReinsurerList />} />
       <Route path="/treaty" element={<TreatyList />} />
+      <Route path="/risk-view" element={<RiskAllocationView />} />
       <Route path="/error" element={<AccessDenied />} />
     </Routes>
   );

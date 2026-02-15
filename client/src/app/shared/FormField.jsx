@@ -2,6 +2,7 @@ export default function FormField({
   label,
   type = "text",
   value,
+  inputStyles = "",
   onChange,
   ...rest
 }) {
@@ -12,7 +13,7 @@ export default function FormField({
         type={type}
         value={value}
         onChange={onChange}
-        className="form-control"
+        className={`form-control ${inputStyles}`}
         {...rest}
       />
     </div>

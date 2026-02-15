@@ -13,7 +13,13 @@ exports.createClaim = async (req, res) => {
       const incremented = lastNumber + 1;
       nextClaimNumber = `C${String(incremented).padStart(3, "0")}`;
     }
-    const policy = await Policy.findOne({ policyNumber: req.body.policyId });
+    const policy = await Policy.findOne({
+      policyNumber: req.body.policyId,
+      status: "ACTIVE",
+    });
+    if (!policy) {
+      return res.json({ message: "No active policy found" });
+    }
     const claim = await Claim.create({
       ...req.body,
       claimNumber: nextClaimNumber,
