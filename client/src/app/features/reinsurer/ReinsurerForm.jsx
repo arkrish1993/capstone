@@ -55,6 +55,7 @@ export default function ReinsurerForm({
   };
 
   const onSubmitHandler = async () => {
+    setAlertMessage("");
     const payload = {
       name: form.name,
       country: form.country,
@@ -108,7 +109,6 @@ export default function ReinsurerForm({
                 label="Code"
                 name="code"
                 value={form.code}
-                readOnly={true}
                 disabled={true}
                 onChange={onChangeHandler}
               />

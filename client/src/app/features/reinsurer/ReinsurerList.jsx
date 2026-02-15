@@ -64,6 +64,7 @@ export default function ReinsurerList() {
   };
 
   const confirmDelete = async () => {
+    setAlertMessage("");
     try {
       await api.delete(`/reinsurers/${itemToDelete._id}`);
       fetchReinsurers();

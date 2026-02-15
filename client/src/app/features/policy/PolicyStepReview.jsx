@@ -16,6 +16,7 @@ const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
   const [alertMessage, setAlertMessage] = useState("");
 
   const onSave = async () => {
+    setAlertMessage("");
     try {
       if (mode === "edit") {
         await api.put(`/policies/${policyId}`, data);

@@ -60,6 +60,7 @@ export default function UserList() {
   };
 
   const confirmDelete = async () => {
+    setAlertMessage("");
     try {
       await api.delete(`/users/${userToDelete._id}`);
       fetchUsers();

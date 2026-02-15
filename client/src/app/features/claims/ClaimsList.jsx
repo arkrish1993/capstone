@@ -59,6 +59,7 @@ export default function ClaimsList() {
   };
 
   const onReject = async () => {
+    setAlertMessage("");
     try {
       await api.put(`/claims/${selectedItem._id}`, {
         status: "REJECTED",
@@ -76,6 +77,7 @@ export default function ClaimsList() {
   };
 
   const onSettle = async (claimId) => {
+    setAlertMessage("");
     try {
       await api.put(`/claims/${claimId}`, {
         status: "SETTLED",

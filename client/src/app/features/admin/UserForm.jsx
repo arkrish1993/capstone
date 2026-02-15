@@ -69,6 +69,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
   };
 
   const onSubmitHandler = async () => {
+    setAlertMessage("");
     const payload = {
       username: form.username,
       email: form.email,

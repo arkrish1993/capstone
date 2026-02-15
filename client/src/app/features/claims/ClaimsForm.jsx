@@ -57,6 +57,7 @@ export default function ClaimsForm({
   };
 
   const onSubmitHandler = async () => {
+    setAlertMessage("");
     const payload = {
       policyId: form.policyId,
       claimAmount: form.claimAmount,
@@ -109,7 +110,7 @@ export default function ClaimsForm({
                 label="Policy ID"
                 name="policyId"
                 value={form.policyId}
-                readOnly={mode === "approve"}
+                disabled={mode === "approve"}
                 placeholder="Enter policy ID"
                 onChange={onChangeHandler}
               />
@@ -119,7 +120,7 @@ export default function ClaimsForm({
                 name="claimAmount"
                 value={form.claimAmount}
                 min={0}
-                readOnly={mode === "approve"}
+                disabled={mode === "approve"}
                 placeholder="Enter claim amount"
                 onChange={onChangeHandler}
               />
@@ -138,7 +139,7 @@ export default function ClaimsForm({
                 type="date"
                 label="Incident date"
                 name="incidentDate"
-                readOnly={mode === "approve"}
+                disabled={mode === "approve"}
                 max={today}
                 value={form.incidentDate || ""}
                 onChange={onChangeHandler}
