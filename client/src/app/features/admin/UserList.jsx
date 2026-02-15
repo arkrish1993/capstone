@@ -6,7 +6,7 @@ import Badge from "../../shared/Badge";
 import ConfirmDialog from "../../shared/ConfirmDialog";
 import DataTable from "../../shared/DataTable";
 import UserForm from "./UserForm";
-import { USER_TABLE_COLUMNS } from "../../common/constants";
+import { ADMIN_LINKS, USER_TABLE_COLUMNS } from "../../common/constants";
 import Alert from "../../shared/Alert";
 import { useAuth } from "../../hooks/useAuth";
 import { isAllowed } from "../../common/utils";
@@ -94,7 +94,7 @@ export default function UserList() {
   }
 
   return (
-    <AppShell>
+    <AppShell links={ADMIN_LINKS}>
       {!!alertMessage && (
         <Alert
           alertMessage={alertMessage}

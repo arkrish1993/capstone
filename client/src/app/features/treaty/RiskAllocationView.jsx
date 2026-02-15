@@ -3,7 +3,7 @@ import api from "../../services/apiClient";
 import Loader from "../../shared/Loader";
 import FormField from "../../shared/FormField"; // ← add this
 import {
-  REINSURER_ANALYST_PORTAL_LINKS,
+  REINSURER_ANALYST_LINKS,
   RISK_ALLOCATION_VIEW_COLUMNS,
 } from "../../common/constants";
 import AppShell from "../../layouts/AppShell";
@@ -38,11 +38,14 @@ export default function RiskAllocationView() {
   };
 
   return (
-    <AppShell links={REINSURER_ANALYST_PORTAL_LINKS}>
+    <AppShell links={REINSURER_ANALYST_LINKS}>
       <div className="card shadow m-4 mt-5 rounded-2">
         <h5 className="bg-dark bg-gradient text-white p-4 rounded-top-2">
           Risk Allocation View
         </h5>
+        <h6 className="text-muted pt-2 px-4">
+          Please enter the Policy ID to proceed.{" "}
+        </h6>
 
         <div className="d-flex gap-3 p-4 align-items-end">
           <div className="flex-grow-1">

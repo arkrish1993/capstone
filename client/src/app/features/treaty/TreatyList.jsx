@@ -10,7 +10,7 @@ import { isAllowed, toDDMMMYYYY } from "../../common/utils";
 import AppShell from "../../layouts/AppShell";
 import {
   TREATY_TABLE_COLUMNS,
-  REINSURER_ANALYST_PORTAL_LINKS,
+  REINSURER_ANALYST_LINKS,
 } from "../../common/constants";
 import EmptyState from "../../shared/EmptyState";
 
@@ -56,7 +56,7 @@ export default function TreatyList() {
   if (error) return <ErrorState message={error} />;
 
   return (
-    <AppShell links={REINSURER_ANALYST_PORTAL_LINKS}>
+    <AppShell links={REINSURER_ANALYST_LINKS}>
       <div className="card shadow-sm">
         <div className="card-header d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Treaties</h5>

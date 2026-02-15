@@ -34,6 +34,22 @@ exports.getReinsurerDistribution = async (req, res) => {
           avgCededPercentage: { $avg: "$allocations.allocatedPercentage" },
         },
       },
+      {
+        $lookup: {
+          from: "reinsurers",
+          localField: "_id",
+          foreignField: "_id",
+          as: "reinsurer",
+        },
+      },
+      { $unwind: "$reinsurer" },
+      {
+        $project: {
+          _id: "$reinsurer.name",
+          totalCededAmount: 1,
+          avgCededPercentage: 1,
+        },
+      },
       { $sort: { totalCededAmount: -1 } },
     ]);
 

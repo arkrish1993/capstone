@@ -8,6 +8,7 @@ import AppShell from "../../layouts/AppShell";
 import PolicyWizardBreadcrumb from "./PolicyWizardBreadcrumb";
 import Loader from "../../shared/Loader";
 import { toYYYYMMDD } from "../../common/utils";
+import { UNDERWRITER_LINKS } from "../../common/constants";
 
 const CreatePolicyWizard = ({ mode }) => {
   const { policyId } = useParams();
@@ -46,14 +47,14 @@ const CreatePolicyWizard = ({ mode }) => {
 
   if (loading) {
     return (
-      <AppShell>
+      <AppShell links={UNDERWRITER_LINKS}>
         <Loader loaderStyle="spinner-grow spinner-grow text-success mt-4 px-3" />
       </AppShell>
     );
   }
 
   return (
-    <AppShell>
+    <AppShell links={UNDERWRITER_LINKS}>
       <div className="card m-4 shadow">
         <div className="card-header pt-4 px-4 bg-dark bg-gradient">
           <h3 className="text-white">

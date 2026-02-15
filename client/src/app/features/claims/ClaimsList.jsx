@@ -4,7 +4,10 @@ import Loader from "../../shared/Loader";
 import ErrorState from "../../shared/ErrorState";
 import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
-import { CLAIM_TABLE_COLUMNS } from "../../common/constants";
+import {
+  CLAIM_TABLE_COLUMNS,
+  CLAIMS_ADJUSTER_LINKS,
+} from "../../common/constants";
 import Alert from "../../shared/Alert";
 import { useAuth } from "../../hooks/useAuth";
 import { isAllowed, toDDMMMYYYY } from "../../common/utils";
@@ -105,7 +108,7 @@ export default function ClaimsList() {
   }
 
   return (
-    <AppShell>
+    <AppShell links={CLAIMS_ADJUSTER_LINKS}>
       {!!alertMessage && (
         <Alert
           alertMessage={alertMessage}

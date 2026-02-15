@@ -12,7 +12,7 @@ import { isAllowed } from "../../common/utils";
 import AppShell from "../../layouts/AppShell";
 import {
   REINSURER_TABLE_COLUMNS,
-  REINSURER_ANALYST_PORTAL_LINKS,
+  REINSURER_ANALYST_LINKS,
 } from "../../common/constants";
 import EmptyState from "../../shared/EmptyState";
 
@@ -98,7 +98,7 @@ export default function ReinsurerList() {
   }
 
   return (
-    <AppShell links={REINSURER_ANALYST_PORTAL_LINKS}>
+    <AppShell links={REINSURER_ANALYST_LINKS}>
       {!!alertMessage && (
         <Alert
           alertMessage={alertMessage}

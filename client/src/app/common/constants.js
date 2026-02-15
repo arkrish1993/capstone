@@ -10,19 +10,19 @@ export const BadgeColorMap = {
   SETTLED: "secondary",
 };
 
+export const USER_ROLE_OPTIONS = [
+  "ADMIN",
+  "UNDERWRITER",
+  "CLAIMS_ADJUSTER",
+  "REINSURANCE_ANALYST",
+];
+
 export const USER_TABLE_COLUMNS = [
   { key: "name", label: "Name" },
   { key: "email", label: "Email" },
   { key: "role", label: "Role" },
   { key: "status", label: "Status" },
   { key: "actions", label: "Actions" },
-];
-
-export const USER_ROLE_OPTIONS = [
-  "ADMIN",
-  "UNDERWRITER",
-  "CLAIMS_ADJUSTER",
-  "REINSURANCE_ANALYST",
 ];
 
 export const USER_PERMISSION_OPTIONS = {
@@ -75,12 +75,6 @@ export const REINSURER_TABLE_COLUMNS = [
 
 export const REINSURER_RATING_OPTIONS = ["AAA", "AA", "A", "BBB"];
 
-export const REINSURER_ANALYST_PORTAL_LINKS = [
-  { label: "Reinsurer", url: "/reinsurer" },
-  { label: "Treaty", url: "/treaty" },
-  { label: "View Risk", url: "/risk-view" },
-];
-
 export const TREATY_TYPE_OPTIONS = ["QUOTA_SHARE", "SURPLUS"];
 
 export const TREATY_TABLE_COLUMNS = [
@@ -103,4 +97,26 @@ export const RISK_ALLOCATION_VIEW_COLUMNS = [
   { key: "treatyLimit", label: "Treaty Limit" },
   { key: "allocatedAmount", label: "Allocated Amount" },
   { key: "allocatedPercentage", label: "Allocated %" },
+];
+
+export const ADMIN_LINKS = [
+  { label: "Home", url: "/dashboard" },
+  { label: "User", url: "/user" },
+];
+
+export const UNDERWRITER_LINKS = [
+  { label: "Home", url: "/dashboard" },
+  { label: "Policy", url: "/policy" },
+];
+
+export const CLAIMS_ADJUSTER_LINKS = [
+  { label: "Home", url: "/dashboard" },
+  { label: "Claim", url: "/claim" },
+];
+
+export const REINSURER_ANALYST_LINKS = [
+  { label: "Home", url: "/dashboard" },
+  { label: "Reinsurer", url: "/reinsurer" },
+  { label: "Treaty", url: "/treaty" },
+  { label: "View Risk", url: "/risk-view" },
 ];

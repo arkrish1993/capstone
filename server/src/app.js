@@ -11,6 +11,7 @@ const claimRoutes = require("./routes/claimRoutes");
 const reinsurerRoutes = require("./routes/reinsurerRoutes");
 const treatyRoutes = require("./routes/treatyRoutes");
 const riskAllocationRoutes = require("./routes/riskAllocationRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use("/api/claims", claimRoutes);
 app.use("/api/reinsurers", reinsurerRoutes);
 app.use("/api/treaties", treatyRoutes);
 app.use("/api/risk-allocations", riskAllocationRoutes);
+app.use("/api/analytics", dashboardRoutes);
 
 module.exports = app;

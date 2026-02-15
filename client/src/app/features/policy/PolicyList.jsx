@@ -5,7 +5,10 @@ import ErrorState from "../../shared/ErrorState";
 import EmptyState from "../../shared/EmptyState";
 import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
-import { POLICY_TABLE_COLUMNS } from "../../common/constants";
+import {
+  POLICY_TABLE_COLUMNS,
+  UNDERWRITER_LINKS,
+} from "../../common/constants";
 import { isAllowed, toDDMMMYYYY } from "../../common/utils";
 import { useNavigate } from "react-router-dom";
 import AppShell from "../../layouts/AppShell";
@@ -82,7 +85,7 @@ export default function PolicyList() {
   }
 
   return (
-    <AppShell>
+    <AppShell links={UNDERWRITER_LINKS}>
       <div className="card shadow-sm">
         <div className="card-header w-100 d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
           <h5 className="mb-0">Policies</h5>

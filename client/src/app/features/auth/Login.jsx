@@ -9,13 +9,10 @@ import { useAuth } from "../../hooks/useAuth";
 const getRerouteURL = (role) => {
   switch (role) {
     case "ADMIN":
-      return "/admin";
     case "UNDERWRITER":
-      return "/policy";
     case "CLAIMS_ADJUSTER":
-      return "/claim";
     case "REINSURANCE_ANALYST":
-      return "/reinsurer";
+      return "/dashboard";
     default:
       return "/error";
   }
