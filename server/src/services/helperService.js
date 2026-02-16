@@ -1,22 +1,14 @@
-const Policy = require("../models/Policy");
-const Treaty = require("../models/Treaty");
-const RiskAllocation = require("../models/RiskAllocation");
 const AuditLog = require("../models/AuditLog");
 
-exports.getTotalExposure = async () => {
-  const result = await Policy.aggregate([
-    { $match: { status: "ACTIVE" } },
-    { $group: { _id: null, totalExposure: { $sum: "$sumInsured" } } },
-  ]);
-  return result[0]?.totalExposure || 0;
-};
-
-exports.getClientIp = async (req) => {
+exports.getClientIp = (req) => {
   const forwarded = req.headers["x-forwarded-for"];
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
+  let ip = forwarded
+    ? forwarded.split(",")[0].trim()
+    : req.socket.remoteAddress;
+  if (ip && ip.startsWith("::ffff:")) {
+    ip = ip.substring(7);
   }
-  return req.socket.remoteAddress;
+  return ip;
 };
 
 exports.createAuditLog = async (log) => {

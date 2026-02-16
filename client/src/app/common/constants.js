@@ -67,6 +67,7 @@ export const CLAIM_TABLE_COLUMNS = [
 export const REINSURER_TABLE_COLUMNS = [
   { key: "code", label: "ID" },
   { key: "name", label: "Name" },
+  { key: "contactEmail", label: "Email ID" },
   { key: "country", label: "Country" },
   { key: "rating", label: "Rating" },
   { key: "status", label: "Status" },

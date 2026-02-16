@@ -131,6 +131,7 @@ export default function ReinsurerList() {
                   <tr key={reinsurer._id} className="align-middle">
                     <td className="fw-medium">{reinsurer.code}</td>
                     <td>{reinsurer.name}</td>
+                    <td>{reinsurer.contactEmail}</td>
                     <td>{reinsurer.country}</td>
 
                     <td>
