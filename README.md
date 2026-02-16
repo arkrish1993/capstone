@@ -18,21 +18,12 @@ Build a full-stack system that manages insurance policies and claims, and automa
 
 ---
 
-## High-Level Architecture
+## Tech Stack
 
-**Frontend:** React (Vite, Context API, Custom Hooks)  
-**Backend:** Node.js + Express REST API  
-**Database:** MongoDB (Mongoose)
-
-**Core Services / Modules**
-
-- Policy Management
-- Claims Management
-- Reinsurance Allocation Engine
-- Dashboard & Analytics
-- User & Authentication Service
-
-**Architecture Style:** Modular Monolith (Service-Oriented Design)
+**Frontend:** React, Vite
+**Backend:** Node.js, Express  
+**Database:** MongoDB + Mongoose  
+**Authentication:** JWT  
 
 ---
 
@@ -143,63 +134,22 @@ CAPSTONE
 
 ## Core Modules
 
-### User & Role Management
+**Core Services / Modules**
 
-**Roles**
-
-- Admin
-- Underwriter
-- Claims Adjuster
-- Reinsurance Analyst
-
-**Features**
-
-- JWT Authentication
-- Role-Based Access Control (RBAC)
-- Protected Routes
+- Policy Management
+- Claims Management
+- Reinsurance Allocation Engine
+- Analytics Dashboard
+- User & Authentication Service
 
 ---
 
-### Policy Management Module
+**User Roles**
 
-**Key Capabilities**
-
-- Multi-step Policy Wizard
-- Auto-generated Policy Numbers
-- Exposure Calculation
-- Approval Workflow
-
----
-
-### Claims Management Module
-
-**Lifecycle**
-Submitted → Under Review → Approved → Paid / Rejected
-
-**Features**
-
-- Coverage Validation
-- Status Timeline UI
-- Audit Logging
-
----
-
-### Reinsurance Allocation Engine
-
-**Capabilities**
-
-- Treaty-Based Allocation
-- Proportional Risk Sharing
-- Exposure Aggregation per Reinsurer
-
----
-
-### Dashboard & Analytics
-
-- Exposure by Policy Type
-- Claims Ratio
-- Reinsurer Risk Distribution
-- Trend Visualizations
+- Admin – Full system access to manage users, roles, and permissions.
+- Underwriter - Creates, edits, reviews, and approves insurance policies for activation.
+- Claims Adjuster – Creates, edits, reviews, approves, rejects, and settles claims.
+- Reinsurance Analyst – Monitors policy risk allocations; Manages reinsurers and treaties.
 
 ---
 
@@ -221,24 +171,6 @@ Submitted → Under Review → Approved → Paid / Rejected
 
 - JWT Authentication
 - Role Guards
-- Audit Trails
-- Environment-Based Secrets
-
----
-
-## Tech Stack
-
-**Frontend:** React, Vite, Context API  
-**Backend:** Node.js, Express  
-**Database:** MongoDB + Mongoose  
-**Authentication:** JWT  
-**Architecture:** Modular Monolith
-
----
-
-## Future Enhancements
-
-- AI-Based Fraud Detection
-- Advanced Reporting
-- Notifications
-- Cloud Deployment & CI/CD
+- Protected Routes
+- Permission Guarded Actions
+- Audit Logs
