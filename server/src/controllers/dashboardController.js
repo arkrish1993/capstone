@@ -9,8 +9,8 @@ exports.getExposureByLOB = async (req, res) => {
       {
         $group: {
           _id: "$lineOfBusiness",
-          totalSumInsured: { $sum: { $ifNull: ["$sumInsured", 0] } },
-          totalPremium: { $sum: { $ifNull: ["$premium", 0] } },
+          totalSumInsured: { $sum: "$sumInsured" },
+          totalPremium: { $sum: "$premium" },
           policyCount: { $sum: 1 },
         },
       },
@@ -41,7 +41,7 @@ exports.getReinsurerDistribution = async (req, res) => {
           as: "reinsurer",
         },
       },
-      { $unwind: { path: "$reinsurer", preserveNullAndEmptyArrays: true } },
+      { $unwind: "$reinsurer" },
       {
         $project: {
           _id: "$reinsurer.name",
@@ -57,7 +57,6 @@ exports.getReinsurerDistribution = async (req, res) => {
   }
 };
 
-//Claims Ratio (Loss Ratio)
 exports.getLossRatio = async (req, res) => {
   try {
     const totalClaims = await Claim.aggregate([
@@ -74,14 +73,13 @@ exports.getLossRatio = async (req, res) => {
     res.json({
       totalApprovedClaims: claims,
       totalPremium: premium,
-      lossRatioPercentage: Number(ratio.toFixed(2)),
+      lossRatioPercentage: ratio.toFixed(2),
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-//Monthly Claims Trend
 exports.getMonthlyClaimsTrend = async (req, res) => {
   try {
     const data = await Claim.aggregate([
@@ -106,7 +104,6 @@ exports.getMonthlyClaimsTrend = async (req, res) => {
   }
 };
 
-//Retained vs Ceded Exposure
 exports.getRetentionVsCeded = async (req, res) => {
   try {
     const totalCeded = await RiskAllocation.aggregate([
@@ -115,6 +112,13 @@ exports.getRetentionVsCeded = async (req, res) => {
         $group: {
           _id: null,
           totalCeded: { $sum: "$allocations.allocatedAmount" },
+        },
+      },
+    ]);
+    const totalRetained = await RiskAllocation.aggregate([
+      {
+        $group: {
+          _id: null,
           totalRetained: { $sum: "$retainedAmount" },
         },
       },
@@ -128,7 +132,6 @@ exports.getRetentionVsCeded = async (req, res) => {
   }
 };
 
-//Top 5 High Claim Policies
 exports.getHighClaimPolicies = async (req, res) => {
   try {
     const data = await Claim.aggregate([
@@ -149,7 +152,9 @@ exports.getHighClaimPolicies = async (req, res) => {
           as: "policy",
         },
       },
-      { $unwind: { path: "$policy", preserveNullAndEmptyArrays: true } },
+
+      { $unwind: "$policy" },
+
       {
         $project: {
           _id: 0,

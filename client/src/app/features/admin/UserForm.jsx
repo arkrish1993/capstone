@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
 import FormField from "../../shared/FormField";
 import {
+  SOMETHING_WENT_WRONG,
   USER_PERMISSION_OPTIONS,
   USER_ROLE_OPTIONS,
 } from "../../common/constants";
@@ -100,7 +101,7 @@ export default function UserForm({ onClose, showModal, userData = null }) {
         await api.post("/users/create", payload);
       }
     } catch (error) {
-      setAlertMessage(error.message || "Failed to save user.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
       return;
     }
 

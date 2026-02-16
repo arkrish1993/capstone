@@ -11,6 +11,7 @@ import AppShell from "../../layouts/AppShell";
 import {
   TREATY_TABLE_COLUMNS,
   REINSURER_ANALYST_LINKS,
+  SOMETHING_WENT_WRONG,
 } from "../../common/constants";
 import EmptyState from "../../shared/EmptyState";
 
@@ -31,8 +32,8 @@ export default function TreatyList() {
       setLoading(true);
       const res = await api.get("/treaties");
       setTreaties(res.data);
-    } catch {
-      setError("Failed to fetch treaties.");
+    } catch (error) {
+      setError(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setLoading(false);
     }

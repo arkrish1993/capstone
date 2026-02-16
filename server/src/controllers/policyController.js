@@ -49,7 +49,7 @@ exports.createPolicy = async (req, res) => {
     });
     res.status(201).json(policy);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -72,7 +72,7 @@ exports.getPolicies = async (req, res) => {
       .populate("createdBy", "username");
     res.json(policies);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -80,11 +80,11 @@ exports.getPolicyById = async (req, res) => {
   try {
     const policy = await Policy.findById(req.params.id);
     if (!policy) {
-      return res.status(404).json({ message: "Policy not found" });
+      return res.status(404).json({ error: "Policy not found" });
     }
     res.json(policy);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -92,7 +92,7 @@ exports.updatePolicy = async (req, res) => {
   try {
     const oldValue = await Policy.findById(req.params.id);
     if (!oldValue) {
-      return res.status(404).json({ message: "Policy not found" });
+      return res.status(404).json({ error: "Policy not found" });
     }
     const remarks = parseRemarks(oldValue.remarks);
     const newStatus = req.body.status || oldValue.status;
@@ -126,7 +126,7 @@ exports.updatePolicy = async (req, res) => {
     });
     res.json(policy);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -137,11 +137,11 @@ exports.approvePolicy = async (req, res) => {
     const policy = await Policy.findById(policyId);
     const oldValue = policy.toObject();
     if (!policy) {
-      return res.status(404).json({ message: "Policy not found" });
+      return res.status(404).json({ error: "Policy not found" });
     }
     if (policy.status !== "DRAFT") {
       return res.status(400).json({
-        message: `Policy is not in DRAFT state. Current state: ${policy.status}`,
+        error: `Policy is not in DRAFT state. Current state: ${policy.status}`,
       });
     }
     const remarks = parseRemarks(policy.remarks);
@@ -165,6 +165,6 @@ exports.approvePolicy = async (req, res) => {
       allocation,
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };

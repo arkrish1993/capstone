@@ -120,3 +120,5 @@ export const REINSURER_ANALYST_LINKS = [
   { label: "Treaty", url: "/treaty" },
   { label: "View Risk", url: "/risk-view" },
 ];
+
+export const SOMETHING_WENT_WRONG = "Something went wrong.";

@@ -4,9 +4,12 @@ const { createAuditLog, getClientIp } = require("../services/helperService");
 
 exports.createTreaty = async (req, res) => {
   try {
-    const reinsurer = await Reinsurer.findOne({ code: req.body.reinsurerId });
+    const reinsurer = await Reinsurer.findOne({
+      code: req.body.reinsurerId,
+      isDeleted: false,
+    });
     if (!reinsurer) {
-      return res.status(404).json({ message: "Reinsurer not found." });
+      return res.status(404).json({ error: "Reinsurer not found." });
     }
     const treaty = await Treaty.create({
       ...req.body,
@@ -23,7 +26,7 @@ exports.createTreaty = async (req, res) => {
     });
     res.status(201).json(treaty);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -42,7 +45,7 @@ exports.getTreaties = async (req, res) => {
     const treaties = await Treaty.find().populate("reinsurerId");
     res.json(treaties);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -50,16 +53,22 @@ exports.updateTreaty = async (req, res) => {
   try {
     const oldValue = await Treaty.findById(req.params.id);
     if (!oldValue) {
-      return res.status(404).json({ message: "Treaty not found." });
+      return res.status(404).json({ error: "Treaty not found." });
     }
     let reinsurer;
     if (req.body.reinsurerId) {
-      reinsurer = await Reinsurer.findOne({ code: req.body.reinsurerId });
+      reinsurer = await Reinsurer.findOne({
+        code: req.body.reinsurerId,
+        isDeleted: false,
+      });
     } else {
-      reinsurer = await Reinsurer.findById(oldValue.reinsurerId);
+      reinsurer = await Reinsurer.findOne({
+        code: oldValue.reinsurerId,
+        isDeleted: false,
+      });
     }
     if (!reinsurer) {
-      return res.status(400).json({ message: "Reinsurer not found." });
+      return res.status(404).json({ error: "Reinsurer not found." });
     }
     const treaty = await Treaty.findByIdAndUpdate(
       req.params.id,
@@ -81,6 +90,6 @@ exports.updateTreaty = async (req, res) => {
     res.json(treaty);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

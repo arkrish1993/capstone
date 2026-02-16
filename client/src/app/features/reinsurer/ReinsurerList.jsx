@@ -13,6 +13,7 @@ import AppShell from "../../layouts/AppShell";
 import {
   REINSURER_TABLE_COLUMNS,
   REINSURER_ANALYST_LINKS,
+  SOMETHING_WENT_WRONG,
 } from "../../common/constants";
 import EmptyState from "../../shared/EmptyState";
 
@@ -37,8 +38,8 @@ export default function ReinsurerList() {
       setLoading(true);
       const res = await api.get("/reinsurers");
       setReinsurers(res.data);
-    } catch {
-      setError("Failed to fetch reinsurers.");
+    } catch (error) {
+      setError(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setLoading(false);
     }
@@ -69,7 +70,7 @@ export default function ReinsurerList() {
       await api.delete(`/reinsurers/${itemToDelete._id}`);
       fetchReinsurers();
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setShowDeleteConfirmModal(false);
       setItemToDelete(null);

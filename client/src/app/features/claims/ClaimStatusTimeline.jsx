@@ -6,7 +6,7 @@ export default function ClaimStatusTimeline({ show, onClose, data }) {
     try {
       const parsed = JSON.parse(data || "[]");
       return Array.isArray(parsed) ? parsed : [];
-    } catch {
+    } catch (error) {
       return [];
     }
   }, [data]);

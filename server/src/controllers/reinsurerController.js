@@ -24,7 +24,7 @@ exports.createReinsurer = async (req, res) => {
 
     res.status(201).json(reinsurer);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -33,7 +33,7 @@ exports.getReinsurers = async (req, res) => {
     const reinsurers = await Reinsurer.find({ isDeleted: false });
     res.json(reinsurers);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -41,7 +41,7 @@ exports.updateReinsurer = async (req, res) => {
   try {
     const oldValue = await Reinsurer.findById(req.params.id);
     if (!oldValue) {
-      return res.status(404).json({ message: "Reinsurer not found" });
+      return res.status(404).json({ error: "Reinsurer not found" });
     }
     const reinsurer = await Reinsurer.findByIdAndUpdate(
       req.params.id,
@@ -61,7 +61,7 @@ exports.updateReinsurer = async (req, res) => {
     });
     res.json(reinsurer);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -73,7 +73,7 @@ exports.deleteReinsurer = async (req, res) => {
       isDeleted: true,
     });
     if (!reinsurer) {
-      return res.status(404).json({ message: "Reinsurer not found" });
+      return res.status(404).json({ error: "Reinsurer not found" });
     }
     await createAuditLog({
       entityType: "REINSURER",
@@ -84,6 +84,6 @@ exports.deleteReinsurer = async (req, res) => {
     });
     res.json({ message: "Reinsurer deleted successfully." });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

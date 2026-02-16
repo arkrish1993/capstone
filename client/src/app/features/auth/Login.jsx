@@ -37,7 +37,7 @@ export default function Login() {
       setLoginCredentials(res.data);
 
       navigate(getRerouteURL(res.data.user?.role));
-    } catch {
+    } catch (error) {
       setAuthError(true);
     } finally {
       setIsLoading(false);

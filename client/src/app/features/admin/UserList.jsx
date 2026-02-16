@@ -6,7 +6,11 @@ import Badge from "../../shared/Badge";
 import ConfirmDialog from "../../shared/ConfirmDialog";
 import DataTable from "../../shared/DataTable";
 import UserForm from "./UserForm";
-import { ADMIN_LINKS, USER_TABLE_COLUMNS } from "../../common/constants";
+import {
+  ADMIN_LINKS,
+  SOMETHING_WENT_WRONG,
+  USER_TABLE_COLUMNS,
+} from "../../common/constants";
 import Alert from "../../shared/Alert";
 import { useAuth } from "../../hooks/useAuth";
 import { isAllowed } from "../../common/utils";
@@ -34,8 +38,8 @@ export default function UserList() {
       setLoading(true);
       const res = await api.get("/users");
       setUsers(res.data);
-    } catch {
-      setError("Failed to fetch users.");
+    } catch (error) {
+      setError(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setLoading(false);
     }
@@ -68,7 +72,7 @@ export default function UserList() {
       await api.delete(`/users/${userToDelete._id}`);
       fetchUsers();
     } catch (error) {
-      setAlertMessage(error.message || "Failed to delete user.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setShowDeleteConfirmModal(false);
       setUserToDelete(null);

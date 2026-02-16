@@ -21,7 +21,7 @@ exports.createUser = async (req, res) => {
     });
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -30,7 +30,7 @@ exports.getUsers = async (req, res) => {
     const users = await User.find({ isDeleted: false });
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -47,7 +47,7 @@ exports.updateUser = async (req, res) => {
     }
     const oldValue = await User.findById(req.params.id);
     if (!oldValue) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     const user = await User.findByIdAndUpdate(req.params.id, body, {
       new: true,
@@ -63,7 +63,7 @@ exports.updateUser = async (req, res) => {
     });
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -83,6 +83,6 @@ exports.deleteUser = async (req, res) => {
     });
     res.json({ message: "User deleted successfully." });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

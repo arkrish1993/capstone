@@ -11,7 +11,7 @@ export default function TimelineModal({
     try {
       const parsed = JSON.parse(data || "[]");
       return Array.isArray(parsed) ? parsed : [];
-    } catch {
+    } catch (error) {
       return [];
     }
   }, [data]);

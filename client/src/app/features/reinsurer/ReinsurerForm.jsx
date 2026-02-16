@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
 import FormField from "../../shared/FormField";
 import Alert from "../../shared/Alert";
-import { REINSURER_RATING_OPTIONS } from "../../common/constants";
+import {
+  REINSURER_RATING_OPTIONS,
+  SOMETHING_WENT_WRONG,
+} from "../../common/constants";
 
 export default function ReinsurerForm({
   onClose,
@@ -94,7 +97,7 @@ export default function ReinsurerForm({
         await api.post("/reinsurers/create", payload);
       }
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
       return;
     }
 

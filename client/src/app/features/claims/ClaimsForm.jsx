@@ -3,6 +3,7 @@ import api from "../../services/apiClient";
 import FormField from "../../shared/FormField";
 import Alert from "../../shared/Alert";
 import { toYYYYMMDD } from "../../common/utils";
+import { SOMETHING_WENT_WRONG } from "../../common/constants";
 
 export default function ClaimsForm({
   mode,
@@ -95,7 +96,7 @@ export default function ClaimsForm({
         await api.post("/claims", payload);
       }
     } catch (error) {
-      setAlertMessage(error.message || "Failed to save claim.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
       return;
     }
 

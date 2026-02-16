@@ -7,6 +7,7 @@ import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
 import {
   POLICY_TABLE_COLUMNS,
+  SOMETHING_WENT_WRONG,
   UNDERWRITER_LINKS,
 } from "../../common/constants";
 import { isAllowed, toDDMMMYYYY } from "../../common/utils";
@@ -41,8 +42,8 @@ export default function PolicyList() {
       setLoading(true);
       const res = await api.get("/policies");
       setPolicies(res.data || []);
-    } catch {
-      setError("Failed to fetch policies.");
+    } catch (error) {
+      setError(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setLoading(false);
     }
@@ -76,7 +77,7 @@ export default function PolicyList() {
       await api.post(`/policies/${selectedItem._id}/approve`);
       fetchPolicies();
     } catch (error) {
-      setAlertMessage(error.message || "Failed to submit policy.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setShowConfirmModal(false);
       setSelectedItem(null);

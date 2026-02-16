@@ -10,13 +10,13 @@ exports.protect = async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
   if (!token) {
-    return res.status(401).json({ message: "Not Authorized" });
+    return res.status(401).json({ error: "Not Authorized" });
   }
   try {
     const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(verifiedToken.id);
     next();
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    return res.status(400).json({ error: err.message });
   }
 };

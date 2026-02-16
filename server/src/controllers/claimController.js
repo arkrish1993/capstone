@@ -17,7 +17,7 @@ exports.createClaim = async (req, res) => {
       status: "ACTIVE",
     });
     if (!policy) {
-      return res.status(404).json({ message: "No active policy found" });
+      return res.status(404).json({ error: "No active policy found" });
     }
     const claim = await Claim.create({
       ...req.body,
@@ -41,7 +41,7 @@ exports.createClaim = async (req, res) => {
     });
     res.status(201).json(claim);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -52,7 +52,7 @@ exports.getClaims = async (req, res) => {
       .populate("handledBy", "username");
     res.json(claims);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -60,7 +60,7 @@ exports.updateClaim = async (req, res) => {
   try {
     const oldValue = await Claim.findById(req.params.id);
     if (!oldValue) {
-      return res.status(404).json({ message: "Claim not found" });
+      return res.status(404).json({ error: "Claim not found" });
     }
     let remarks = [];
     try {
@@ -72,7 +72,7 @@ exports.updateClaim = async (req, res) => {
       ? await Policy.findOne({ policyNumber: req.body.policyId })
       : await Policy.findById(oldValue.policyId);
     if (!policy) {
-      return res.status(400).json({ message: "Policy not found" });
+      return res.status(400).json({ error: "Policy not found" });
     }
     const { status } = req.body;
     const statusMessages = {
@@ -108,6 +108,6 @@ exports.updateClaim = async (req, res) => {
     res.json(claim);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

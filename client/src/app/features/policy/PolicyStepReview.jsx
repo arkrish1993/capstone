@@ -3,6 +3,7 @@ import { useState } from "react";
 import api from "../../services/apiClient";
 import Alert from "../../shared/Alert";
 import { convertToCurrency, toDDMMMYYYY } from "../../common/utils";
+import { SOMETHING_WENT_WRONG } from "../../common/constants";
 
 const Row = ({ label, value }) => (
   <div className="row mb-2">
@@ -29,7 +30,7 @@ const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
 
       navigate("/policy");
     } catch (error) {
-      setAlertMessage(error.message || "Failed to save policy.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setSaving(false);
     }

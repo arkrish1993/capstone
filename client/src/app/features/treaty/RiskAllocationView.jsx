@@ -5,6 +5,7 @@ import FormField from "../../shared/FormField";
 import {
   REINSURER_ANALYST_LINKS,
   RISK_ALLOCATION_VIEW_COLUMNS,
+  SOMETHING_WENT_WRONG,
 } from "../../common/constants";
 import AppShell from "../../layouts/AppShell";
 import DataTable from "../../shared/DataTable";
@@ -32,8 +33,8 @@ export default function RiskAllocationView() {
         return;
       }
       setMessage(data.message);
-    } catch {
-      setError("Something went wrong. Please try again later.");
+    } catch (error) {
+      setError(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setLoading(false);
     }

@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import api from "../../services/apiClient";
 import FormField from "../../shared/FormField";
 import Alert from "../../shared/Alert";
-import { TREATY_TYPE_OPTIONS, LOB_OPTIONS } from "../../common/constants";
+import {
+  TREATY_TYPE_OPTIONS,
+  LOB_OPTIONS,
+  SOMETHING_WENT_WRONG,
+} from "../../common/constants";
 import { toYYYYMMDD } from "../../common/utils";
 
 export default function TreatyForm({ onClose, showModal, treatyData = null }) {
@@ -108,7 +112,7 @@ export default function TreatyForm({ onClose, showModal, treatyData = null }) {
         await api.post("/treaties/create", payload);
       }
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
       return;
     }
 
@@ -165,6 +169,7 @@ export default function TreatyForm({ onClose, showModal, treatyData = null }) {
                   <FormField
                     label="Reinsurer ID"
                     name="reinsurerId"
+                    inputStyles="text-uppercase"
                     value={form.reinsurerId}
                     onChange={onChangeHandler}
                     required

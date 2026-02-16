@@ -7,6 +7,7 @@ import DataTable from "../../shared/DataTable";
 import {
   CLAIM_TABLE_COLUMNS,
   CLAIMS_ADJUSTER_LINKS,
+  SOMETHING_WENT_WRONG,
 } from "../../common/constants";
 import Alert from "../../shared/Alert";
 import { useAuth } from "../../hooks/useAuth";
@@ -39,8 +40,8 @@ export default function ClaimsList() {
       setLoading(true);
       const res = await api.get("/claims");
       setClaims(res.data || []);
-    } catch {
-      setError("Failed to fetch claims.");
+    } catch (error) {
+      setError(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setLoading(false);
     }
@@ -80,7 +81,7 @@ export default function ClaimsList() {
       });
       fetchClaims();
     } catch (error) {
-      setAlertMessage(error.message || "Failed to reject claim.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
     } finally {
       setShowConfirmModal(false);
       setSelectedItem(null);
@@ -97,7 +98,7 @@ export default function ClaimsList() {
       });
       fetchClaims();
     } catch (error) {
-      setAlertMessage(error.message || "Failed to settle claim.");
+      setAlertMessage(error.response?.data?.error || SOMETHING_WENT_WRONG);
     }
   };
 
