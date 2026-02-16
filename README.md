@@ -61,7 +61,13 @@ CAPSTONE
 │   │   │   │   │   ├── ClaimsList.jsx
 │   │   │   │   │   └── ClaimStatusTimeline.jsx
 │   │   │   │   ├── dashboard
-│   │   │   │   │   ├── charts
+│   │   │   │   │   ├─ charts
+│   │   │   │   │   |   ├─ ExposureBarChart.jsx
+│   │   │   │   │   |   ├─ HighClaimBarChart.jsx
+│   │   │   │   │   |   ├─ LossRatioRadial.jsx
+│   │   │   │   │   |   ├─ MonthlyClaimsLine.jsx
+│   │   │   │   │   |   ├─ ReinsurerPieChart.jsx
+│   │   │   │   │   |   └─ RetentionPieChart.jsx
 │   │   │   │   │   └── AnalyticsDashboard.jsx
 │   │   │   │   ├── policy
 │   │   │   │   │   ├── CreatePolicyWizard.jsx
