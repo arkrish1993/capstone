@@ -5,14 +5,13 @@ import "./TopBar.css";
 import logo from "../../../assets/capstone.svg";
 
 export default function TopBar({ links }) {
+  const { logout } = useAuth();
   const navigate = useNavigate();
-  const { setLoginCredentials } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const logout = () => {
-    localStorage.clear();
-    setLoginCredentials(null);
-    navigate("/");
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -54,7 +53,7 @@ export default function TopBar({ links }) {
 
           <button
             className="btn btn-sm btn-outline-light mb-2 mb-lg-0 ms-lg-3"
-            onClick={logout}
+            onClick={handleLogout}
           >
             Logout
           </button>

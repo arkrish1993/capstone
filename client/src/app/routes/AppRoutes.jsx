@@ -9,6 +9,8 @@ import ReinsurerList from "../features/reinsurer/ReinsurerList";
 import TreatyList from "../features/treaty/TreatyList";
 import RiskAllocationView from "../features/treaty/RiskAllocationView";
 import AnalyticsDashboard from "../features/dashboard/AnalyticsDashboard";
+import ProtectedRoute from "./ProtectedRoute";
+import InvalidURL from "../shared/InvalidURL";
 
 export default function AppRoutes() {
   return (
@@ -16,27 +18,96 @@ export default function AppRoutes() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
 
-      <Route path="/user" element={<UserList />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute
+            allowedRoles={[
+              "ADMIN",
+              "UNDERWRITER",
+              "CLAIMS_ADJUSTER",
+              "REINSURANCE_ANALYST",
+            ]}
+          >
+            <AnalyticsDashboard />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/policy" element={<PolicyList />} />
+      <Route
+        path="/user"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <UserList />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/policy"
+        element={
+          <ProtectedRoute allowedRoles={["UNDERWRITER"]}>
+            <PolicyList />
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/policy/create"
-        element={<CreatePolicyWizard mode="create" />}
+        element={
+          <ProtectedRoute allowedRoles={["UNDERWRITER"]}>
+            <CreatePolicyWizard mode="create" />
+          </ProtectedRoute>
+        }
       />
+
       <Route
         path="/policy/edit/:policyId"
-        element={<CreatePolicyWizard mode="edit" />}
+        element={
+          <ProtectedRoute allowedRoles={["UNDERWRITER"]}>
+            <CreatePolicyWizard mode="edit" />
+          </ProtectedRoute>
+        }
       />
 
-      <Route path="/claim" element={<ClaimsList />} />
+      <Route
+        path="/claim"
+        element={
+          <ProtectedRoute allowedRoles={["CLAIMS_ADJUSTER"]}>
+            <ClaimsList />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/reinsurer" element={<ReinsurerList />} />
-      <Route path="/treaty" element={<TreatyList />} />
-      <Route path="/risk-view" element={<RiskAllocationView />} />
+      <Route
+        path="/reinsurer"
+        element={
+          <ProtectedRoute allowedRoles={["REINSURANCE_ANALYST"]}>
+            <ReinsurerList />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/dashboard" element={<AnalyticsDashboard />} />
+      <Route
+        path="/treaty"
+        element={
+          <ProtectedRoute allowedRoles={["REINSURANCE_ANALYST"]}>
+            <TreatyList />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/risk-view"
+        element={
+          <ProtectedRoute allowedRoles={["REINSURANCE_ANALYST"]}>
+            <RiskAllocationView />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="/error" element={<AccessDenied />} />
+      <Route path="*" element={<InvalidURL />} />
     </Routes>
   );
 }

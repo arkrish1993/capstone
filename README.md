@@ -1,6 +1,7 @@
 # Insurance & Reinsurance Policy and Claims Management System
 
 ## Business Context
+
 Insurance companies underwrite policies and manage claims, while reinsurance companies share risk when exposure exceeds defined thresholds.  
 This project simulates:
 
@@ -12,6 +13,7 @@ This project simulates:
 ---
 
 ## Core Problem Statement
+
 Build a full-stack system that manages insurance policies and claims, and automatically transfers part of the financial risk to reinsurers when exposure crosses predefined limits.
 
 ---
@@ -23,6 +25,7 @@ Build a full-stack system that manages insurance policies and claims, and automa
 **Database:** MongoDB (Mongoose)
 
 **Core Services / Modules**
+
 - Policy Management
 - Claims Management
 - Reinsurance Allocation Engine
@@ -97,6 +100,7 @@ CAPSTONE
 │   │   │   │   ├── ErrorBoundary.jsx
 │   │   │   │   ├── ErrorState.jsx
 │   │   │   │   ├── FormField.jsx
+│   │   │   │   ├── InvalidURL.jsx
 │   │   │   │   └── Loader.jsx
 │   │   │   ├── assets
 │   │   │   ├── App.jsx
@@ -133,13 +137,16 @@ CAPSTONE
 ## Core Modules
 
 ### User & Role Management
+
 **Roles**
+
 - Admin
 - Underwriter
 - Claims Adjuster
 - Reinsurance Analyst
 
 **Features**
+
 - JWT Authentication
 - Role-Based Access Control (RBAC)
 - Protected Routes
@@ -147,7 +154,9 @@ CAPSTONE
 ---
 
 ### Policy Management Module
+
 **Key Capabilities**
+
 - Multi-step Policy Wizard
 - Auto-generated Policy Numbers
 - Exposure Calculation
@@ -156,10 +165,12 @@ CAPSTONE
 ---
 
 ### Claims Management Module
+
 **Lifecycle**
 Submitted → Under Review → Approved → Paid / Rejected
 
 **Features**
+
 - Coverage Validation
 - Status Timeline UI
 - Audit Logging
@@ -167,7 +178,9 @@ Submitted → Under Review → Approved → Paid / Rejected
 ---
 
 ### Reinsurance Allocation Engine
+
 **Capabilities**
+
 - Treaty-Based Allocation
 - Proportional Risk Sharing
 - Exposure Aggregation per Reinsurer
@@ -175,6 +188,7 @@ Submitted → Under Review → Approved → Paid / Rejected
 ---
 
 ### Dashboard & Analytics
+
 - Exposure by Policy Type
 - Claims Ratio
 - Reinsurer Risk Distribution
@@ -185,6 +199,7 @@ Submitted → Under Review → Approved → Paid / Rejected
 ## MongoDB Data Modelling
 
 **Collections**
+
 - users
 - policies
 - claims
@@ -196,6 +211,7 @@ Submitted → Under Review → Approved → Paid / Rejected
 ---
 
 ## Security
+
 - JWT Authentication
 - Role Guards
 - Audit Trails
@@ -204,6 +220,7 @@ Submitted → Under Review → Approved → Paid / Rejected
 ---
 
 ## Tech Stack
+
 **Frontend:** React, Vite, Context API  
 **Backend:** Node.js, Express  
 **Database:** MongoDB + Mongoose  
@@ -213,6 +230,7 @@ Submitted → Under Review → Approved → Paid / Rejected
 ---
 
 ## Future Enhancements
+
 - AI-Based Fraud Detection
 - Advanced Reporting
 - Notifications

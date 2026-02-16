@@ -25,13 +25,6 @@ class ErrorBoundary extends React.Component {
             className="card shadow-lg border-0 rounded-3 text-center p-5"
             style={{ maxWidth: 520, width: "100%" }}
           >
-            <div className="mb-3">
-              <i
-                className="bi bi-exclamation-triangle text-danger"
-                style={{ fontSize: 48 }}
-              ></i>
-            </div>
-
             <h4 className="text-danger fw-semibold mb-2">
               Something went wrong
             </h4>
