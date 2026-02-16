@@ -18,7 +18,7 @@ export default function RetentionPieChart({ retained, ceded }) {
       <PieChart>
         <Pie data={data} dataKey="value" outerRadius={90} label>
           <Cell fill="#198754" />
-          <Cell fill="#dc3545" />
+          <Cell fill="#9f122c" />
         </Pie>
         <Tooltip formatter={(v) => `₹ ${v.toLocaleString()}`} />
         <Legend />

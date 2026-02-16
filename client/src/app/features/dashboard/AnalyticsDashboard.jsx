@@ -80,8 +80,25 @@ export default function AnalyticsDashboard() {
 
   return (
     <AppShell links={links}>
-      <div className="row p-4" style={{ marginTop: "-1rem" }}>
-        <h3 className="mb-4 text-success text-center">Analytics Dashboard</h3>
+      <div
+        className="row p-4"
+        style={{ marginTop: "-1rem", backgroundColor: "darkslategrey" }}
+      >
+        <h3 className="mb-4 text-success text-white">Analytics Dashboard</h3>
+
+        <ChartCard
+          title="Top 5 High Claim Policies"
+          hasData={highClaims?.length > 0}
+        >
+          <HighClaimBarChart data={highClaims} />
+        </ChartCard>
+
+        <ChartCard
+          title="Monthly Claims Trend"
+          hasData={claimsTrend?.length > 0}
+        >
+          <MonthlyClaimsLine data={claimsTrend} />
+        </ChartCard>
 
         <ChartCard
           title="Exposure by Line of Business"
@@ -101,25 +118,11 @@ export default function AnalyticsDashboard() {
           <LossRatioRadial value={lossRatio.lossRatioPercentage} />
         </ChartCard>
 
-        <ChartCard
-          title="Monthly Claims Trend"
-          hasData={claimsTrend?.length > 0}
-        >
-          <MonthlyClaimsLine data={claimsTrend} />
-        </ChartCard>
-
         <ChartCard title="Retention vs Ceded" hasData={!!retention}>
           <RetentionPieChart
             retained={retention.totalRetained}
             ceded={retention.totalCeded}
           />
-        </ChartCard>
-
-        <ChartCard
-          title="Top 5 High Claim Policies"
-          hasData={highClaims?.length > 0}
-        >
-          <HighClaimBarChart data={highClaims} />
         </ChartCard>
       </div>
     </AppShell>

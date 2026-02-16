@@ -14,11 +14,11 @@ export default function HighClaimBarChart({ data }) {
     <ResponsiveContainer width="95%" height={260}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="_id" />
+        <XAxis dataKey="policyNumber" />
         <YAxis />
         <Tooltip formatter={(v) => `₹ ${v.toLocaleString()}`} />
         <Legend />
-        <Bar dataKey="totalClaimAmount" fill="#ffc107" />
+        <Bar dataKey="totalClaimAmount" fill="#1a5947" />
       </BarChart>
     </ResponsiveContainer>
   );

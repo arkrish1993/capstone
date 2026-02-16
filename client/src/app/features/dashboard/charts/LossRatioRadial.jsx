@@ -16,7 +16,7 @@ export default function LossRatioRadial({ value }) {
         startAngle={180}
         endAngle={0}
       >
-        <RadialBar dataKey="value" fill="#dc3545" background />
+        <RadialBar dataKey="value" fill="#9f122c" background />
         <Tooltip formatter={(v) => `${v}%`} />
         <Legend />
       </RadialBarChart>

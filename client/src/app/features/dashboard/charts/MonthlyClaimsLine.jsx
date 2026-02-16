@@ -33,7 +33,7 @@ export default function MonthlyClaimsLine({ data }) {
         <YAxis />
         <Tooltip formatter={(v) => `₹ ${v.toLocaleString()}`} />
         <Legend />
-        <Line type="monotone" dataKey="totalClaimsAmount" stroke="#0d6efd" />
+        <Line type="monotone" dataKey="totalClaimsAmount" stroke="#31a681" />
       </LineChart>
     </ResponsiveContainer>
   );

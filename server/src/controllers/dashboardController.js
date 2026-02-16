@@ -149,14 +149,35 @@ exports.getHighClaimPolicies = async (req, res) => {
   try {
     const data = await Claim.aggregate([
       { $match: { status: "APPROVED" } },
+
       {
         $group: {
           _id: "$policyId",
           totalClaimAmount: { $sum: "$approvedAmount" },
         },
       },
+
       { $sort: { totalClaimAmount: -1 } },
       { $limit: 5 },
+
+      {
+        $lookup: {
+          from: "policies",
+          localField: "_id",
+          foreignField: "_id",
+          as: "policy",
+        },
+      },
+
+      { $unwind: "$policy" },
+
+      {
+        $project: {
+          _id: 0,
+          policyNumber: "$policy.policyNumber",
+          totalClaimAmount: 1,
+        },
+      },
     ]);
 
     res.json(data);

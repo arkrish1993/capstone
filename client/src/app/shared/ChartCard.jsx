@@ -9,7 +9,7 @@ export default function ChartCard({ title, hasData, children }) {
             No data available
           </div>
         ) : (
-          children
+          <div className="ms-3 mt-3">{children}</div>
         )}
       </div>
     </div>
