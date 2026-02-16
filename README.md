@@ -99,6 +99,7 @@ CAPSTONE
 │   │   │   │   └── Loader.jsx
 │   │   │   ├── assets
 │   │   │   ├── App.jsx
+│   │   │   ├── App.css
 │   │   │   └── main.jsx
 │   │   ├── .env
 │   │   ├── eslint.config.js
