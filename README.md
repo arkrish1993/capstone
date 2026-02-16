@@ -83,6 +83,7 @@ CAPSTONE
 │   │   │   │   └── AppShell.jsx
 │   │   │   ├── routes
 │   │   │   │   └── AppRoutes.jsx
+│   │   │   │   └── ProtectedRoute.jsx
 │   │   │   ├── services
 │   │   │   │   └── apiClient.js
 │   │   │   ├── shared
