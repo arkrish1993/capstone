@@ -180,7 +180,7 @@ export default function UserList() {
       <ConfirmDialog
         showModal={showDeleteConfirmModal}
         title="Delete User"
-        message={`Are you sure you want to delete ${userToDelete?.username}?`}
+        message={`Are you sure you want to delete this user?`}
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />

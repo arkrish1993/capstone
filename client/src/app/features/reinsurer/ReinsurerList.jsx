@@ -181,7 +181,7 @@ export default function ReinsurerList() {
       <ConfirmDialog
         showModal={showDeleteConfirmModal}
         title="Delete Reinsurer"
-        message={`Are you sure you want to delete ${itemToDelete?.name}?`}
+        message={`Are you sure you want to delete this reinsurer?`}
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />
