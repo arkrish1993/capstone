@@ -23,7 +23,7 @@ Build a full-stack system that manages insurance policies and claims, and automa
 **Frontend:** React, Vite
 **Backend:** Node.js, Express  
 **Database:** MongoDB + Mongoose  
-**Authentication:** JWT  
+**Authentication:** JWT
 
 ---
 
@@ -33,7 +33,6 @@ Build a full-stack system that manages insurance policies and claims, and automa
 CAPSTONE
 │
 ├── client
-│   ├── node_modules
 │   ├── src
 │   │   ├── app
 │   │   │   ├── common
@@ -86,46 +85,71 @@ CAPSTONE
 │   │   │   │   └── ProtectedRoute.jsx
 │   │   │   ├── services
 │   │   │   │   └── apiClient.js
-│   │   │   ├── shared
-│   │   │   │   ├── AccessDenied.jsx
-│   │   │   │   ├── Alert.jsx
-│   │   │   │   ├── Badge.jsx
-│   │   │   │   ├── ChartCard.jsx
-│   │   │   │   ├── ConfirmDialog.jsx
-│   │   │   │   ├── DataTable.jsx
-│   │   │   │   ├── EmptyState.jsx
-│   │   │   │   ├── ErrorBoundary.jsx
-│   │   │   │   ├── ErrorState.jsx
-│   │   │   │   ├── FormField.jsx
-│   │   │   │   ├── InvalidURL.jsx
-│   │   │   │   ├── Loader.jsx
-│   │   │   │   └── TimelineModal.jsx
-│   │   │   ├── assets
-│   │   │   ├── App.jsx
-│   │   │   ├── App.css
-│   │   │   └── main.jsx
-│   │   ├── .env
-│   │   ├── eslint.config.js
-│   │   └── index.html
-│
-├── server
-│   ├── node_modules
-│   ├── scripts
-│   │   └── createAdmin.js
-│   ├── src
-│   │   ├── config
-│   │   │   └── db.js
-│   │   ├── controllers
-│   │   ├── middleware
-│   │   ├── models
-│   │   ├── routes
-│   │   ├── services
-│   │   ├── app.js
-│   │   └── server.js
+│   │   │   └── shared
+│   │   │       ├── AccessDenied.jsx
+│   │   │       ├── Alert.jsx
+│   │   │       ├── Badge.jsx
+│   │   │       ├── ChartCard.jsx
+│   │   │       ├── ConfirmDialog.jsx
+│   │   │       ├── DataTable.jsx
+│   │   │       ├── EmptyState.jsx
+│   │   │       ├── ErrorBoundary.jsx
+│   │   │       ├── ErrorState.jsx
+│   │   │       ├── FormField.jsx
+│   │   │       ├── InvalidURL.jsx
+│   │   │       ├── Loader.jsx
+│   │   │       └── TimelineModal.jsx
+│   │   ├── assets
+|   |   |   └── capstone.svg
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   └── main.jsx
 │   ├── .env
-│   ├── package-lock.json
-│   └── package.json
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+|   └── vite.config.js
 │
+├──server/
+|   ├── src/
+|   |   ├── config/
+│   |   │   └── db.js
+│   |   ├──controllers/
+│   |   │  ├── authController.js
+│   |   │  ├── claimController.js
+│   |   │  ├── dashboardController.js
+│   |   │  ├── policyController.js
+│   |   │  ├── reinsurerController.js
+│   |   │  ├── riskAllocationController.js
+│   |   │  ├── treatyController.js
+│   |   │  └── userController.js
+│   |   ├── middleware/
+│   |   │   ├── authMiddleware.js
+│   |   │   └── roleGuard.js
+│   |   ├── models/
+│   |   │  ├── AuditLog.js
+│   |   │  ├── Claim.js
+│   |   │  ├── Policy.js
+│   |   │  ├── Reinsurer.js
+│   |   │  ├── RiskAllocation.js
+│   |   │  ├── Treaty.js
+│   |   │  └── User.js
+│   |   ├── routes/
+│   |   │  ├── authRoutes.js
+│   |   │  ├── claimRoutes.js
+│   |   │  ├── dashboardRoutes.js
+│   |   │  ├── policyRoutes.js
+│   |   │  ├── reinsurerRoutes.js
+│   |   │  ├── riskAllocationRoutes.js
+│   |   │  ├── treatyRoutes.js
+│   |   │  └── userRoutes.js
+│   |   ├── services/
+│   |   │  ├── helperService.js
+│   |   │  └── reinsuranceEngine.js
+│   |   ├── app.js
+│   |   └── server.js
+|   ├── .env
+|   └── package.json
 ├── .gitignore
 └── README.md
 ```
