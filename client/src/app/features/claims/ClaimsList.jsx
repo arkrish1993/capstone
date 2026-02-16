@@ -14,7 +14,7 @@ import { isAllowed, toDDMMMYYYY } from "../../common/utils";
 import AppShell from "../../layouts/AppShell";
 import EmptyState from "../../shared/EmptyState";
 import ClaimsForm from "./ClaimsForm";
-import ClaimStatusTimeline from "./ClaimStatusTimeline";
+import TimelineModal from "../../shared/TimelineModal";
 import ConfirmDialog from "../../shared/ConfirmDialog";
 
 export default function ClaimsList() {
@@ -209,7 +209,7 @@ export default function ClaimsList() {
                         <button
                           className="btn btn-outline-secondary btn-sm"
                           onClick={() => setTimelineData(claim.remarks)}
-                          title="Timeline"
+                          title="View history"
                         >
                           <i className="bi bi-eye"></i>
                         </button>
@@ -230,7 +230,7 @@ export default function ClaimsList() {
         claimData={selectedItem}
       />
 
-      <ClaimStatusTimeline
+      <TimelineModal
         show={!!timelineData}
         onClose={() => setTimelineData("")}
         data={timelineData}

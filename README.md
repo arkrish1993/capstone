@@ -107,7 +107,8 @@ CAPSTONE
 │   │   │   │   ├── ErrorState.jsx
 │   │   │   │   ├── FormField.jsx
 │   │   │   │   ├── InvalidURL.jsx
-│   │   │   │   └── Loader.jsx
+│   │   │   │   ├── Loader.jsx
+│   │   │   │   └── TimelineModal.jsx
 │   │   │   ├── assets
 │   │   │   ├── App.jsx
 │   │   │   ├── App.css

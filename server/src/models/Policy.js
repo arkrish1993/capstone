@@ -75,6 +75,11 @@ const PolicySchema = new Schema(
       ref: "User",
       default: null,
     },
+
+    remarks: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

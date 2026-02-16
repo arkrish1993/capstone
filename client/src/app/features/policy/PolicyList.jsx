@@ -15,12 +15,14 @@ import AppShell from "../../layouts/AppShell";
 import { useAuth } from "../../hooks/useAuth";
 import ConfirmDialog from "../../shared/ConfirmDialog";
 import Alert from "../../shared/Alert";
+import TimelineModal from "../../shared/TimelineModal";
 
 export default function PolicyList() {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [timelineData, setTimelineData] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -171,6 +173,14 @@ export default function PolicyList() {
                               <i className="bi bi-check-circle"></i>
                             </button>
                           )}
+
+                        <button
+                          className="btn btn-outline-secondary btn-sm"
+                          onClick={() => setTimelineData(policy.remarks)}
+                          title="View history"
+                        >
+                          <i className="bi bi-eye"></i>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -180,6 +190,12 @@ export default function PolicyList() {
           </div>
         </div>
       </div>
+
+      <TimelineModal
+        show={!!timelineData}
+        onClose={() => setTimelineData("")}
+        data={timelineData}
+      />
 
       <ConfirmDialog
         showModal={showConfirmModal}
