@@ -9,9 +9,9 @@ exports.getAllocationByPolicy = async (req, res) => {
       status: "ACTIVE",
     });
     if (!policy) {
-      return res.json({ message: "Policy not found" });
+      return res.status(404).json({ message: "Policy not found" });
     }
-    let allocations = await RiskAllocation.find({
+    const allocations = await RiskAllocation.find({
       policyId: policy._id,
     })
       .populate("allocations.reinsurerId")
@@ -19,7 +19,7 @@ exports.getAllocationByPolicy = async (req, res) => {
     if (allocations.length) {
       res.json(allocations);
     } else {
-      res.json({ message: "No risk allocation found." });
+      res.status(404).json({ message: "No risk allocation found." });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

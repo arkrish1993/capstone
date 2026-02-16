@@ -23,14 +23,11 @@ exports.createPolicy = async (req, res) => {
     const lastPolicy = await Policy.findOne({})
       .sort({ policyNumber: -1 })
       .select("policyNumber");
-
     let nextPolicyNumber = "P001";
     if (lastPolicy && lastPolicy.policyNumber) {
       const lastNumber = parseInt(lastPolicy.policyNumber.replace("P", ""), 10);
-      const incremented = lastNumber + 1;
-      nextPolicyNumber = `P${String(incremented).padStart(3, "0")}`;
+      nextPolicyNumber = `P${String(lastNumber + 1).padStart(3, "0")}`;
     }
-
     const policy = await Policy.create({
       ...req.body,
       policyNumber: nextPolicyNumber,
@@ -42,8 +39,7 @@ exports.createPolicy = async (req, res) => {
         },
       ]),
     });
-
-    createAuditLog({
+    await createAuditLog({
       entityType: "POLICY",
       entityId: policy._id,
       action: "CREATE",
@@ -51,7 +47,6 @@ exports.createPolicy = async (req, res) => {
       performedBy: req.user._id,
       ipAddress: await getClientIp(req),
     });
-
     res.status(201).json(policy);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -61,12 +56,10 @@ exports.createPolicy = async (req, res) => {
 exports.getPolicies = async (req, res) => {
   try {
     const today = new Date();
-
     const expiringPolicies = await Policy.find({
       effectiveTo: { $lt: today },
       status: { $ne: "EXPIRED" },
     });
-
     for (const p of expiringPolicies) {
       const remarks = parseRemarks(p.remarks);
       pushRemark(remarks, "Policy automatically expired after end date.");
@@ -74,11 +67,9 @@ exports.getPolicies = async (req, res) => {
       p.remarks = JSON.stringify(remarks);
       await p.save();
     }
-
     const policies = await Policy.find()
       .populate("approvedBy", "username")
       .populate("createdBy", "username");
-
     res.json(policies);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -100,14 +91,11 @@ exports.getPolicyById = async (req, res) => {
 exports.updatePolicy = async (req, res) => {
   try {
     const oldValue = await Policy.findById(req.params.id);
-
     if (!oldValue) {
       return res.status(404).json({ message: "Policy not found" });
     }
-
     const remarks = parseRemarks(oldValue.remarks);
     const newStatus = req.body.status || oldValue.status;
-
     if (req.body.status && req.body.status !== oldValue.status) {
       if (newStatus === "DRAFT") {
         pushRemark(remarks, "Policy moved back to DRAFT.");
@@ -119,7 +107,6 @@ exports.updatePolicy = async (req, res) => {
     } else {
       pushRemark(remarks, "Policy details updated.");
     }
-
     const policy = await Policy.findByIdAndUpdate(
       req.params.id,
       {
@@ -128,8 +115,7 @@ exports.updatePolicy = async (req, res) => {
       },
       { new: true },
     );
-
-    createAuditLog({
+    await createAuditLog({
       entityType: "POLICY",
       entityId: policy._id,
       action: "UPDATE",
@@ -138,7 +124,6 @@ exports.updatePolicy = async (req, res) => {
       performedBy: req.user._id,
       ipAddress: await getClientIp(req),
     });
-
     res.json(policy);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -149,30 +134,23 @@ exports.approvePolicy = async (req, res) => {
   try {
     const { policyId } = req.params;
     const userId = req.user._id;
-
     const policy = await Policy.findById(policyId);
-    const oldValue = policy;
-
+    const oldValue = policy.toObject();
     if (!policy) {
       return res.status(404).json({ message: "Policy not found" });
     }
-
     if (policy.status !== "DRAFT") {
       return res.status(400).json({
         message: `Policy is not in DRAFT state. Current state: ${policy.status}`,
       });
     }
-
     const remarks = parseRemarks(policy.remarks);
     pushRemark(remarks, "Policy approved and activated.");
-
     policy.status = "ACTIVE";
     policy.approvedBy = userId;
     policy.remarks = JSON.stringify(remarks);
-
     await policy.save();
-
-    createAuditLog({
+    await createAuditLog({
       entityType: "POLICY",
       entityId: policy._id,
       action: "APPROVE",
@@ -181,15 +159,12 @@ exports.approvePolicy = async (req, res) => {
       performedBy: req.user._id,
       ipAddress: await getClientIp(req),
     });
-
     const allocation = await reinsuranceEngine(policy, userId);
-
     return res.status(200).json({
       message: "Policy approved successfully",
       allocation,
     });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };

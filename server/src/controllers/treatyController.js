@@ -5,12 +5,15 @@ const { createAuditLog, getClientIp } = require("../services/helperService");
 exports.createTreaty = async (req, res) => {
   try {
     const reinsurer = await Reinsurer.findOne({ code: req.body.reinsurerId });
+    if (!reinsurer) {
+      return res.status(404).json({ message: "Reinsurer not found." });
+    }
     const treaty = await Treaty.create({
       ...req.body,
       reinsurerId: reinsurer._id,
       status: "ACTIVE",
     });
-    createAuditLog({
+    await createAuditLog({
       entityType: "TREATY",
       entityId: treaty._id,
       action: "CREATE",
@@ -46,22 +49,27 @@ exports.getTreaties = async (req, res) => {
 exports.updateTreaty = async (req, res) => {
   try {
     const oldValue = await Treaty.findById(req.params.id);
-    const reinsurer = req.body.reinsurerId
-      ? await Reinsurer.findOne({
-          code: req.body.reinsurerId,
-        })
-      : await Reinsurer.findById(oldValue.reinsurerId);
+    if (!oldValue) {
+      return res.status(404).json({ message: "Treaty not found." });
+    }
+    let reinsurer;
+    if (req.body.reinsurerId) {
+      reinsurer = await Reinsurer.findOne({ code: req.body.reinsurerId });
+    } else {
+      reinsurer = await Reinsurer.findById(oldValue.reinsurerId);
+    }
+    if (!reinsurer) {
+      return res.status(400).json({ message: "Reinsurer not found." });
+    }
     const treaty = await Treaty.findByIdAndUpdate(
       req.params.id,
       {
         ...req.body,
         reinsurerId: reinsurer._id,
       },
-      {
-        new: true,
-      },
+      { new: true },
     );
-    createAuditLog({
+    await createAuditLog({
       entityType: "TREATY",
       entityId: treaty._id,
       action: "UPDATE",
