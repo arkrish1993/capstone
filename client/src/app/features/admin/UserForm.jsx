@@ -9,20 +9,23 @@ import Alert from "../../shared/Alert";
 
 export default function UserForm({ onClose, showModal, userData = null }) {
   const isEdit = !!userData;
-  const [alertMessage, setAlertMessage] = useState("");
 
-  const [form, setForm] = useState({
+  const [alertMessage, setAlertMessage] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const emptyForm = {
     username: "",
     email: "",
     password: "",
     role: "",
     status: true,
     permissions: [],
-  });
+  };
+
+  const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
     if (userData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         username: userData.username || "",
         email: userData.email || "",
@@ -32,55 +35,63 @@ export default function UserForm({ onClose, showModal, userData = null }) {
         permissions: userData.permissions || [],
       });
     } else {
-      setForm({
-        username: "",
-        email: "",
-        password: "",
-        role: "",
-        status: true,
-        permissions: [],
-      });
+      setForm(emptyForm);
     }
+    setErrors({});
   }, [userData, showModal]);
 
   if (!showModal) return null;
 
-  const isActionDisabled = () => {
-    if (!isEdit) {
-      return !form.username || !form.email || !form.password || !form.role;
-    }
-    return false;
-  };
-
   const onChangeHandler = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const togglePermission = (value) => {
-    setForm((prev) => {
-      const exists = prev.permissions.includes(value);
-      return {
-        ...prev,
-        permissions: exists
-          ? prev.permissions.filter((p) => p !== value)
-          : [...prev.permissions, value],
-      };
-    });
+    const exists = form.permissions.includes(value);
+    const updated = exists
+      ? form.permissions.filter((p) => p !== value)
+      : [...form.permissions, value];
+
+    setForm({ ...form, permissions: updated });
+    setErrors({ ...errors, permissions: "" });
+  };
+
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const validate = () => {
+    const e = {};
+
+    if (!form.username.trim()) e.username = "Username is required.";
+
+    if (!form.email.trim()) e.email = "Email is required.";
+    else if (!validateEmail(form.email))
+      e.email = "Enter a valid email address.";
+
+    if (!isEdit && !form.password.trim()) e.password = "Password is required.";
+
+    if (!form.role) e.role = "Select a role.";
+
+    if (form.role && !form.permissions.length)
+      e.permissions = "Select at least one permission.";
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const onSubmitHandler = async () => {
     setAlertMessage("");
+    if (!validate()) return;
+
     const payload = {
-      username: form.username,
-      email: form.email,
+      username: form.username.trim(),
+      email: form.email.trim(),
       role: form.role,
       status: form.status ? "ACTIVE" : "INACTIVE",
       permissions: form.permissions,
     };
 
-    if (form.password.trim()) {
-      payload.password = form.password;
-    }
+    if (form.password.trim()) payload.password = form.password;
 
     try {
       if (isEdit) {
@@ -89,9 +100,11 @@ export default function UserForm({ onClose, showModal, userData = null }) {
         await api.post("/users/create", payload);
       }
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.message || "Failed to save user.");
+      return;
     }
-    onClose();
+
+    onClose(true);
   };
 
   return (
@@ -102,105 +115,131 @@ export default function UserForm({ onClose, showModal, userData = null }) {
           onDismiss={() => setAlertMessage("")}
         />
       )}
+
       <div className="modal-backdrop fade show"></div>
+
       <div className="modal fade show d-block">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header text-light bg-dark bg-gradient p-4">
+        <div className="modal-dialog modal-xl modal-dialog-centered">
+          <div className="modal-content border-0 shadow-lg rounded-3">
+            <div className="modal-header bg-dark text-white py-3 px-4">
               <h5 className="modal-title">
                 {isEdit ? "Update User" : "Create User"}
               </h5>
             </div>
 
-            <div className="modal-body px-5">
-              <FormField
-                label="Username"
-                name="username"
-                value={form.username}
-                onChange={onChangeHandler}
-              />
-
-              <FormField
-                label="Email"
-                type={"email"}
-                name="email"
-                value={form.email}
-                onChange={onChangeHandler}
-              />
-
-              <FormField
-                label={`Password ${isEdit ? "(Leave blank to keep unchanged)" : ""}`}
-                type={"password"}
-                name="password"
-                value={form.password}
-                onChange={onChangeHandler}
-              />
-
-              <div className="mb-3">
-                <label className="form-label">Role</label>
-                <select
-                  className="form-select"
-                  name="role"
-                  value={form.role}
-                  onChange={onChangeHandler}
-                >
-                  <option value="">Select Role</option>
-                  {USER_ROLE_OPTIONS.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label d-block">Status</label>
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={form.status}
-                    onChange={() => setForm({ ...form, status: !form.status })}
+            <div className="modal-body px-5 py-4">
+              <div className="row g-4">
+                <div className="col-md-6">
+                  <FormField
+                    label="Username"
+                    name="username"
+                    value={form.username}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.username}
                   />
-                  <label className="form-check-label">
-                    {form.status ? "ACTIVE" : "INACTIVE"}
-                  </label>
                 </div>
-              </div>
 
-              {!!form.role && (
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Permissions</label>
-                  <div className="d-flex">
-                    {USER_PERMISSION_OPTIONS[form.role].map((p) => (
-                      <div key={p} className="form-check me-3">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={form.permissions.includes(p)}
-                          onChange={() => togglePermission(p)}
-                        />
-                        <label className="form-check-label">{p}</label>
-                      </div>
+                <div className="col-md-6">
+                  <FormField
+                    label="Email"
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.email}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <FormField
+                    label={`Password ${
+                      isEdit ? "(Leave blank to keep unchanged)" : ""
+                    }`}
+                    type="password"
+                    name="password"
+                    value={form.password}
+                    onChange={onChangeHandler}
+                    required={!isEdit}
+                    error={errors.password}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">
+                    Role <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-select ${errors.role ? "is-invalid" : ""}`}
+                    name="role"
+                    value={form.role}
+                    onChange={onChangeHandler}
+                  >
+                    <option value="">Select Role</option>
+                    {USER_ROLE_OPTIONS.map((role) => (
+                      <option key={role}>{role}</option>
                     ))}
+                  </select>
+                  <div className="invalid-feedback">{errors.role}</div>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label d-block">Status</label>
+                  <div className="form-check form-switch mt-2">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={form.status}
+                      onChange={() =>
+                        setForm({ ...form, status: !form.status })
+                      }
+                    />
+                    <label className="form-check-label ms-2">
+                      {form.status ? "ACTIVE" : "INACTIVE"}
+                    </label>
                   </div>
                 </div>
-              )}
+
+                {!!form.role && (
+                  <div className="col-md-12">
+                    <label className="form-label fw-semibold">
+                      Permissions <span className="text-danger">*</span>
+                    </label>
+
+                    <div className="row">
+                      {USER_PERMISSION_OPTIONS[form.role].map((p) => (
+                        <div key={p} className="col-md-3 form-check mb-2">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={form.permissions.includes(p)}
+                            onChange={() => togglePermission(p)}
+                          />
+                          <label className="form-check-label ms-1">{p}</label>
+                        </div>
+                      ))}
+                    </div>
+
+                    {errors.permissions && (
+                      <div className="text-danger small mt-1">
+                        {errors.permissions}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="d-flex justify-content-end text-light p-4 pt-2">
+            <div className="modal-footer px-4 py-3">
               <button
-                className="btn btn-outline-secondary me-3"
-                onClick={onClose}
+                className="btn btn-outline-secondary"
+                onClick={() => onClose(false)}
               >
                 Cancel
               </button>
-              <button
-                className="btn btn-success"
-                onClick={onSubmitHandler}
-                disabled={isActionDisabled()}
-              >
-                {isEdit ? "Update" : "Create"}
+              <button className="btn btn-success" onClick={onSubmitHandler}>
+                {isEdit ? "Update User" : "Create User"}
               </button>
             </div>
           </div>

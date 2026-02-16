@@ -13,6 +13,7 @@ import { UNDERWRITER_LINKS } from "../../common/constants";
 const CreatePolicyWizard = ({ mode }) => {
   const { policyId } = useParams();
   const navigate = useNavigate();
+
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
@@ -45,53 +46,60 @@ const CreatePolicyWizard = ({ mode }) => {
     }
   }, [mode, policyId, fetchPolicyDetails]);
 
-  if (loading) {
-    return (
-      <AppShell links={UNDERWRITER_LINKS}>
-        <Loader loaderStyle="spinner-grow spinner-grow text-success mt-4 px-3" />
-      </AppShell>
-    );
-  }
-
   return (
     <AppShell links={UNDERWRITER_LINKS}>
-      <div className="card m-4 shadow">
-        <div className="card-header pt-4 px-4 bg-dark bg-gradient">
-          <h3 className="text-white">
-            {mode === "edit" ? "Edit Policy" : "Create Policy"}
-          </h3>
-          <PolicyWizardBreadcrumb currentStep={step} />
-        </div>
-        <div className="p-4">
-          {step === 0 && (
-            <PolicyStepGeneral
-              data={formData}
-              onNext={onNext}
-              onChange={updateData}
-              onCancel={onCancel}
-            />
-          )}
+      <div className="container py-4">
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="card shadow-lg border-0 rounded-3">
+            <div className="card-header bg-dark bg-gradient text-white py-3 px-4">
+              <div className="d-flex flex-column">
+                <h5 className="mb-1">
+                  {mode === "edit" ? "Edit Policy" : "Create Policy"}
+                </h5>
+                <small className="opacity-75">
+                  Configure policy details and coverage
+                </small>
+              </div>
+            </div>
 
-          {step === 1 && (
-            <PolicyStepCoverage
-              data={formData}
-              onNext={onNext}
-              onBack={onBack}
-              onChange={updateData}
-              onCancel={onCancel}
-            />
-          )}
+            <div className="card-body p-4">
+              <div className="mb-4">
+                <PolicyWizardBreadcrumb currentStep={step} />
+              </div>
 
-          {step === 2 && (
-            <PolicyStepReview
-              data={formData}
-              onBack={onBack}
-              mode={mode}
-              policyId={policyId}
-              onCancel={onCancel}
-            />
-          )}
-        </div>
+              {step === 0 && (
+                <PolicyStepGeneral
+                  data={formData}
+                  onNext={onNext}
+                  onChange={updateData}
+                  onCancel={onCancel}
+                />
+              )}
+
+              {step === 1 && (
+                <PolicyStepCoverage
+                  data={formData}
+                  onNext={onNext}
+                  onBack={onBack}
+                  onChange={updateData}
+                  onCancel={onCancel}
+                />
+              )}
+
+              {step === 2 && (
+                <PolicyStepReview
+                  data={formData}
+                  onBack={onBack}
+                  mode={mode}
+                  policyId={policyId}
+                  onCancel={onCancel}
+                />
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </AppShell>
   );

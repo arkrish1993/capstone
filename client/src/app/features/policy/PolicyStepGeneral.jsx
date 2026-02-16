@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   POLICY_INSURED_TYPE_OPTIONS,
   LOB_OPTIONS,
@@ -5,61 +6,95 @@ import {
 import FormField from "../../shared/FormField";
 
 const PolicyStepGeneral = ({ data, onNext, onChange, onCancel }) => {
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const e = {};
+
+    if (!data.insuredName?.trim()) e.insuredName = "Insured name is required.";
+
+    if (!data.insuredType) e.insuredType = "Select insured type.";
+
+    if (!data.lineOfBusiness) e.lineOfBusiness = "Select line of business.";
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validate()) onNext();
+  };
+
   return (
-    <>
-      <h4>General Details</h4>
-      <FormField
-        label="Insured name"
-        name="insuredName"
-        value={data.insuredName || ""}
-        placeholder="Enter name"
-        onChange={(e) => onChange({ insuredName: e.target.value })}
-      />
-      <div className="mb-3">
-        <label className="form-label">Insured type</label>
-        <select
-          className="form-select mb-2"
-          value={data.insuredType || ""}
-          onChange={(e) => onChange({ insuredType: e.target.value })}
-        >
-          <option value="">Select Type</option>
-          {POLICY_INSURED_TYPE_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+    <div>
+      <h5 className="mb-4">General Details</h5>
+
+      <div className="row g-4">
+        <div className="col-md-6">
+          <FormField
+            label="Insured Name"
+            name="insuredName"
+            value={data.insuredName || ""}
+            placeholder="Enter insured name"
+            onChange={(e) => onChange({ insuredName: e.target.value })}
+            required
+            error={errors.insuredName}
+          />
+        </div>
+
+        <div className="col-md-6">
+          <label className="form-label">Insured Type *</label>
+          <select
+            className={`form-select ${errors.insuredType ? "is-invalid" : ""}`}
+            value={data.insuredType || ""}
+            onChange={(e) => onChange({ insuredType: e.target.value })}
+          >
+            <option value="">Select Type</option>
+            {POLICY_INSURED_TYPE_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.insuredType && (
+            <div className="invalid-feedback d-block">{errors.insuredType}</div>
+          )}
+        </div>
+
+        <div className="col-md-6">
+          <label className="form-label">Line of Business *</label>
+          <select
+            className={`form-select ${
+              errors.lineOfBusiness ? "is-invalid" : ""
+            }`}
+            value={data.lineOfBusiness || ""}
+            onChange={(e) => onChange({ lineOfBusiness: e.target.value })}
+          >
+            <option value="">Select Line of Business</option>
+            {LOB_OPTIONS.map((lob) => (
+              <option key={lob} value={lob}>
+                {lob}
+              </option>
+            ))}
+          </select>
+          {errors.lineOfBusiness && (
+            <div className="invalid-feedback d-block">
+              {errors.lineOfBusiness}
+            </div>
+          )}
+        </div>
       </div>
-      <div className="mb-3">
-        <label className="form-label">Line of business</label>
-        <select
-          className="form-select mb-3"
-          value={data.lineOfBusiness || ""}
-          onChange={(e) => onChange({ lineOfBusiness: e.target.value })}
-        >
-          <option value="">Line of Business</option>
-          {LOB_OPTIONS.map((lob) => (
-            <option key={lob} value={lob}>
-              {lob}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="d-flex justify-content-end pt-2">
-        <button className="btn btn-outline-secondary me-3" onClick={onCancel}>
+
+      <div className="d-flex justify-content-between mt-4">
+        <button className="btn btn-outline-secondary" onClick={onCancel}>
           Cancel
         </button>
-        <button
-          className="btn btn-success"
-          onClick={onNext}
-          disabled={
-            !data.insuredName || !data.insuredType || !data.lineOfBusiness
-          }
-        >
+
+        <button className="btn btn-success" onClick={handleNext}>
           Next
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

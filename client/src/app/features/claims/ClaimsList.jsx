@@ -38,7 +38,7 @@ export default function ClaimsList() {
     try {
       setLoading(true);
       const res = await api.get("/claims");
-      setClaims(res.data);
+      setClaims(res.data || []);
     } catch {
       setError("Failed to fetch claims.");
     } finally {
@@ -51,17 +51,28 @@ export default function ClaimsList() {
   }, []);
 
   const onCreate = () => {
-    setShowModal(true);
+    setMode("create");
     setSelectedItem(null);
+    setShowModal(true);
   };
 
   const onEdit = (claim) => {
+    if (!claim?._id) return;
     setMode("edit");
     setSelectedItem(claim);
     setShowModal(true);
   };
 
+  const onApprove = (claim) => {
+    if (!claim?._id) return;
+    setMode("approve");
+    setSelectedItem(claim);
+    setShowModal(true);
+  };
+
   const onReject = async () => {
+    if (!selectedItem?._id) return;
+
     setAlertMessage("");
     try {
       await api.put(`/claims/${selectedItem._id}`, {
@@ -69,17 +80,16 @@ export default function ClaimsList() {
       });
       fetchClaims();
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.message || "Failed to reject claim.");
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedItem(null);
     }
   };
 
-  const onApprove = (claim) => {
-    setMode("approve");
-    setSelectedItem(claim);
-    setShowModal(true);
-  };
-
   const onSettle = async (claimId) => {
+    if (!claimId) return;
+
     setAlertMessage("");
     try {
       await api.put(`/claims/${claimId}`, {
@@ -87,7 +97,7 @@ export default function ClaimsList() {
       });
       fetchClaims();
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.message || "Failed to settle claim.");
     }
   };
 
@@ -97,112 +107,125 @@ export default function ClaimsList() {
     if (reload) fetchClaims();
   };
 
-  if (loading) {
-    return (
-      <Loader loaderStyle="spinner-grow spinner-grow text-success mt-4 px-3" />
-    );
-  }
-
-  if (error) {
-    return <ErrorState message={error} />;
-  }
+  if (loading) return <Loader />;
+  if (error) return <ErrorState message={error} />;
 
   return (
     <AppShell links={CLAIMS_ADJUSTER_LINKS}>
-      {!!alertMessage && (
-        <Alert
-          alertMessage={alertMessage}
-          onDismiss={() => setAlertMessage("")}
-        />
-      )}
-      <div className="card shadow-sm">
-        <div className="card-header w-100 d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
-          <h5 className="mb-0">Claims</h5>
-          {isCreateAllowed && (
-            <button className="btn btn-success" onClick={onCreate}>
-              <i className="bi bi-plus-lg me-1"></i>
-              Create Claim
-            </button>
-          )}
-        </div>
-        {!claims.length && (
-          <EmptyState title="No data found. Please click on 'Create Claim' to proceed." />
-        )}
-        {claims.length > 0 && (
-          <DataTable
-            columns={CLAIM_TABLE_COLUMNS}
-            data={claims}
-            renderRow={(claim) => (
-              <tr key={claim._id} height="50" className="align-middle">
-                <td>{claim.claimNumber}</td>
-                <td>{claim.policyId.policyNumber}</td>
-                <td>₹{claim.claimAmount}</td>
-                <td>₹{claim.approvedAmount}</td>
-                <td>
-                  <Badge type={claim.status} badgeText={claim.status} />
-                </td>
-                <td>{toDDMMMYYYY(claim.incidentDate)}</td>
-                <td>{toDDMMMYYYY(claim.reportedDate)}</td>
-                <td>{claim.handledBy ? claim.handledBy.username : "-"}</td>
-                <td>
-                  <div className="d-flex justify-content-end">
-                    {isEditAllowed && claim.status === "IN_REVIEW" && (
-                      <button
-                        className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => onEdit(claim)}
-                        title="Edit"
-                      >
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
-                    )}
-                    {isReviewAllowed && claim.status === "IN_REVIEW" && (
-                      <>
-                        <button
-                          className="btn btn-outline-success btn-sm me-2"
-                          onClick={() => onApprove(claim)}
-                          title="Approve Claim"
-                        >
-                          <i className="bi bi-check-circle"></i>
-                        </button>
-                        <button
-                          className="btn btn-outline-danger btn-sm me-2"
-                          onClick={() => {
-                            setSelectedItem(claim);
-                            setShowConfirmModal(true);
-                          }}
-                          title="Reject Claim"
-                        >
-                          <i className="bi bi-x-circle"></i>
-                        </button>
-                      </>
-                    )}
-                    {isReviewAllowed && claim.status === "APPROVED" && (
-                      <button
-                        className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => onSettle(claim._id)}
-                        title="Settle Claim"
-                      >
-                        <i className="bi bi-cash-coin"></i>
-                      </button>
-                    )}
-                    <button
-                      className="btn btn-outline-success btn-sm me-2"
-                      onClick={() => setTimelineData(claim.remarks)}
-                      title="View timeline"
-                    >
-                      <i className="bi bi-eye"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            )}
+      <div className="container py-4">
+        {!!alertMessage && (
+          <Alert
+            alertMessage={alertMessage}
+            onDismiss={() => setAlertMessage("")}
           />
         )}
+
+        <div className="card shadow-lg border-0 rounded-3">
+          <div className="card-header bg-dark bg-gradient text-white py-3 px-4 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className="mb-0">Claims</h5>
+              <small className="opacity-75">
+                Manage claim lifecycle and approvals
+              </small>
+            </div>
+
+            {isCreateAllowed && (
+              <button className="btn btn-success" onClick={onCreate}>
+                <i className="bi bi-plus-lg me-1"></i>
+                Create Claim
+              </button>
+            )}
+          </div>
+
+          <div className="card-body p-4">
+            {!claims.length && (
+              <EmptyState title="No claims found. Create one to get started." />
+            )}
+
+            {claims.length > 0 && (
+              <DataTable
+                columns={CLAIM_TABLE_COLUMNS}
+                data={claims}
+                renderRow={(claim) => (
+                  <tr key={claim._id} className="align-middle">
+                    <td className="fw-medium">{claim.claimNumber}</td>
+                    <td>{claim.policyId?.policyNumber}</td>
+                    <td>₹{claim.claimAmount}</td>
+                    <td>₹{claim.approvedAmount}</td>
+
+                    <td>
+                      <Badge type={claim.status} badgeText={claim.status} />
+                    </td>
+
+                    <td>{toDDMMMYYYY(claim.incidentDate)}</td>
+                    <td>{toDDMMMYYYY(claim.reportedDate)}</td>
+                    <td>{claim.handledBy?.username || "-"}</td>
+
+                    <td className="text-end">
+                      <div className="d-flex justify-content-end gap-2 flex-wrap">
+                        {isEditAllowed && claim.status === "IN_REVIEW" && (
+                          <button
+                            className="btn btn-outline-success btn-sm"
+                            onClick={() => onEdit(claim)}
+                            title="Edit"
+                          >
+                            <i className="bi bi-pencil-square"></i>
+                          </button>
+                        )}
+
+                        {isReviewAllowed && claim.status === "IN_REVIEW" && (
+                          <>
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => onApprove(claim)}
+                              title="Approve"
+                            >
+                              <i className="bi bi-check-circle"></i>
+                            </button>
+
+                            <button
+                              className="btn btn-outline-danger btn-sm"
+                              onClick={() => {
+                                setSelectedItem(claim);
+                                setShowConfirmModal(true);
+                              }}
+                              title="Reject"
+                            >
+                              <i className="bi bi-x-circle"></i>
+                            </button>
+                          </>
+                        )}
+
+                        {isReviewAllowed && claim.status === "APPROVED" && (
+                          <button
+                            className="btn btn-outline-success btn-sm"
+                            onClick={() => onSettle(claim._id)}
+                            title="Settle"
+                          >
+                            <i className="bi bi-cash-coin"></i>
+                          </button>
+                        )}
+
+                        <button
+                          className="btn btn-outline-secondary btn-sm"
+                          onClick={() => setTimelineData(claim.remarks)}
+                          title="Timeline"
+                        >
+                          <i className="bi bi-eye"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <ClaimsForm
         mode={mode}
-        onClose={() => onModalClose(true)}
+        onClose={onModalClose}
         showModal={showModal}
         claimData={selectedItem}
       />
@@ -216,7 +239,7 @@ export default function ClaimsList() {
       <ConfirmDialog
         showModal={showConfirmModal}
         title="Confirm Rejection"
-        message={`Are you sure you want to reject this claim?`}
+        message="Are you sure you want to reject this claim?"
         onConfirm={onReject}
         onCancel={() => setShowConfirmModal(false)}
       />

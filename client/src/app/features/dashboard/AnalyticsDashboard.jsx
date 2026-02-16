@@ -41,6 +41,7 @@ export default function AnalyticsDashboard() {
   const [claimsTrend, setClaimsTrend] = useState([]);
   const [retention, setRetention] = useState(null);
   const [highClaims, setHighClaims] = useState([]);
+
   const { loggedInUser } = useAuth();
   const navigate = useNavigate();
 
@@ -67,63 +68,77 @@ export default function AnalyticsDashboard() {
         setLoading(false);
       }
     };
+
     load();
   }, []);
 
   if (loading) return <Loader />;
 
   const links = getLinks(loggedInUser?.user?.role);
-
-  if (!links.length) {
-    navigate("/login");
-  }
+  if (!links.length) navigate("/login");
 
   return (
     <AppShell links={links}>
-      <div
-        className="row p-4"
-        style={{ marginTop: "-1rem", backgroundColor: "darkslategrey" }}
-      >
-        <h3 className="mb-4 text-success text-white">Analytics Dashboard</h3>
+      <div className="container-fluid py-4">
+        <div className="mb-4">
+          <h3 className="fw-semibold mb-1">Analytics Dashboard</h3>
+          <p className="text-muted mb-0">
+            Overview of policies, claims, and reinsurance metrics
+          </p>
+        </div>
 
-        <ChartCard
-          title="Top 5 High Claim Policies"
-          hasData={highClaims?.length > 0}
-        >
-          <HighClaimBarChart data={highClaims} />
-        </ChartCard>
+        <div className="row g-4">
+          <div className="col-xl-6 col-lg-6 col-md-12">
+            <ChartCard
+              title="Top 5 High Claim Policies"
+              hasData={highClaims?.length > 0}
+            >
+              <HighClaimBarChart data={highClaims} />
+            </ChartCard>
+          </div>
 
-        <ChartCard
-          title="Monthly Claims Trend"
-          hasData={claimsTrend?.length > 0}
-        >
-          <MonthlyClaimsLine data={claimsTrend} />
-        </ChartCard>
+          <div className="col-xl-6 col-lg-6 col-md-12">
+            <ChartCard
+              title="Monthly Claims Trend"
+              hasData={claimsTrend?.length > 0}
+            >
+              <MonthlyClaimsLine data={claimsTrend} />
+            </ChartCard>
+          </div>
 
-        <ChartCard
-          title="Exposure by Line of Business"
-          hasData={lob?.length > 0}
-        >
-          <ExposureBarChart data={lob} />
-        </ChartCard>
+          <div className="col-xl-6 col-lg-6 col-md-12">
+            <ChartCard
+              title="Exposure by Line of Business"
+              hasData={lob?.length > 0}
+            >
+              <ExposureBarChart data={lob} />
+            </ChartCard>
+          </div>
 
-        <ChartCard
-          title="Reinsurer Distribution"
-          hasData={reinsurer?.length > 0}
-        >
-          <ReinsurerPieChart data={reinsurer} />
-        </ChartCard>
+          <div className="col-xl-6 col-lg-6 col-md-12">
+            <ChartCard
+              title="Reinsurer Distribution"
+              hasData={reinsurer?.length > 0}
+            >
+              <ReinsurerPieChart data={reinsurer} />
+            </ChartCard>
+          </div>
 
-        <ChartCard title="Loss Ratio" hasData={!!lossRatio}>
-          <LossRatioRadial value={lossRatio.lossRatioPercentage} />
-        </ChartCard>
+          <div className="col-xl-6 col-lg-6 col-md-12">
+            <ChartCard title="Loss Ratio" hasData={!!lossRatio}>
+              <LossRatioRadial value={lossRatio?.lossRatioPercentage} />
+            </ChartCard>
+          </div>
 
-        <ChartCard title="Retention vs Ceded" hasData={!!retention}>
-          <RetentionPieChart
-            retained={retention.totalRetained}
-            ceded={retention.totalCeded}
-          />
-        </ChartCard>
+          <div className="col-xl-6 col-lg-6 col-md-12">
+            <ChartCard title="Retention vs Ceded" hasData={!!retention}>
+              <RetentionPieChart
+                retained={retention?.totalRetained}
+                ceded={retention?.totalCeded}
+              />
+            </ChartCard>
+          </div>
+        </div>
       </div>
     </AppShell>
   );

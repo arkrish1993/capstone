@@ -8,22 +8,26 @@ import { toYYYYMMDD } from "../../common/utils";
 export default function TreatyForm({ onClose, showModal, treatyData = null }) {
   const today = new Date().toISOString().split("T")[0];
   const isEdit = !!treatyData;
-  const [alertMessage, setAlertMessage] = useState("");
 
-  const [form, setForm] = useState({
+  const [alertMessage, setAlertMessage] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const emptyForm = {
     treatyName: "",
     treatyType: "",
+    reinsurerId: "",
     sharePercentage: "",
     retentionLimit: "",
     treatyLimit: "",
     applicableLOBs: [],
     effectiveFrom: "",
     effectiveTo: "",
-  });
+  };
+
+  const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
     if (treatyData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         treatyName: treatyData.treatyName || "",
         treatyType: treatyData.treatyType || "",
@@ -36,51 +40,67 @@ export default function TreatyForm({ onClose, showModal, treatyData = null }) {
         effectiveTo: toYYYYMMDD(treatyData.effectiveTo),
       });
     } else {
-      setForm({
-        treatyName: "",
-        treatyType: "",
-        reinsurerId: "",
-        sharePercentage: "",
-        retentionLimit: "",
-        treatyLimit: "",
-        applicableLOBs: [],
-        effectiveFrom: "",
-        effectiveTo: "",
-      });
+      setForm(emptyForm);
     }
+    setErrors({});
   }, [treatyData, showModal]);
 
   if (!showModal) return null;
 
   const onChangeHandler = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const onLobChange = (lob) => {
     const updated = form.applicableLOBs.includes(lob)
       ? form.applicableLOBs.filter((l) => l !== lob)
       : [...form.applicableLOBs, lob];
+
     setForm({ ...form, applicableLOBs: updated });
+    setErrors({ ...errors, applicableLOBs: "" });
   };
 
-  const isActionDisabled = () => {
-    return (
-      !form.treatyName ||
-      !form.treatyType ||
-      !form.reinsurerId ||
-      !form.sharePercentage ||
-      !form.retentionLimit ||
-      !form.treatyLimit ||
-      !form.applicableLOBs ||
-      !form.effectiveFrom ||
-      !form.effectiveTo
-    );
+  const validate = () => {
+    const e = {};
+
+    if (!form.treatyName.trim()) e.treatyName = "Treaty name is required.";
+    if (!form.treatyType) e.treatyType = "Select treaty type.";
+    if (!form.reinsurerId.trim()) e.reinsurerId = "Reinsurer ID is required.";
+    if (!form.sharePercentage) e.sharePercentage = "Share % is required";
+
+    if (!form.retentionLimit || form.retentionLimit <= 0)
+      e.retentionLimit = "Retention limit must be > 0.";
+
+    if (!form.treatyLimit || form.treatyLimit <= 0)
+      e.treatyLimit = "Treaty limit must be > 0.";
+
+    if (Number(form.treatyLimit) <= Number(form.retentionLimit))
+      e.treatyLimit = "Treaty limit must be greater than retention.";
+
+    if (!form.applicableLOBs.length)
+      e.applicableLOBs = "Select at least one LOB.";
+
+    if (!form.effectiveFrom) e.effectiveFrom = "Select start date.";
+    if (!form.effectiveTo) e.effectiveTo = "Select end date.";
+
+    if (
+      form.effectiveFrom &&
+      form.effectiveTo &&
+      form.effectiveTo < form.effectiveFrom
+    )
+      e.effectiveTo = "End date must be after start date.";
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const onSubmitHandler = async () => {
     setAlertMessage("");
+    if (!validate()) return;
 
     const payload = { ...form, reinsurerId: form.reinsurerId.toUpperCase() };
+
     try {
       if (isEdit) {
         await api.put(`/treaties/${treatyData._id}`, payload);
@@ -105,125 +125,152 @@ export default function TreatyForm({ onClose, showModal, treatyData = null }) {
       )}
 
       <div className="modal-backdrop fade show"></div>
+
       <div className="modal fade show d-block">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header bg-dark text-white p-4">
+        <div className="modal-dialog modal-xl modal-dialog-centered">
+          <div className="modal-content border-0 shadow-lg rounded-3">
+            <div className="modal-header bg-dark text-white py-3 px-4">
               <h5 className="modal-title">
                 {isEdit ? "Update Treaty" : "Create Treaty"}
               </h5>
             </div>
 
-            <div className="modal-body px-5">
-              <FormField
-                label="Treaty Name"
-                name="treatyName"
-                value={form.treatyName}
-                placeholder="Enter treaty name"
-                onChange={onChangeHandler}
-              />
+            <div className="modal-body px-5 py-4">
+              <div className="row g-4">
+                <div className="col-md-6">
+                  <FormField
+                    label="Treaty Name"
+                    name="treatyName"
+                    value={form.treatyName}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.treatyName}
+                  />
+                </div>
 
-              <div className="mb-3">
-                <label className="form-label">Treaty Type</label>
-                <select
-                  className="form-select"
-                  name="treatyType"
-                  value={form.treatyType}
-                  onChange={onChangeHandler}
-                >
-                  <option value="">Select Type</option>
-                  {TREATY_TYPE_OPTIONS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
+                <div className="col-md-6">
+                  <FormField
+                    label="Treaty Type"
+                    name="treatyType"
+                    type="select"
+                    value={form.treatyType}
+                    onChange={onChangeHandler}
+                    options={TREATY_TYPE_OPTIONS}
+                    required
+                    error={errors.treatyType}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <FormField
+                    label="Reinsurer ID"
+                    name="reinsurerId"
+                    value={form.reinsurerId}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.reinsurerId}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <FormField
+                    label="Share %"
+                    type="number"
+                    name="sharePercentage"
+                    value={form.sharePercentage}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.sharePercentage}
+                    min={0}
+                    max={100}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <FormField
+                    label="Retention Limit"
+                    type="number"
+                    name="retentionLimit"
+                    min={0}
+                    value={form.retentionLimit}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.retentionLimit}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <FormField
+                    label="Treaty Limit"
+                    type="number"
+                    name="treatyLimit"
+                    min={0}
+                    value={form.treatyLimit}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.treatyLimit}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label d-block">
+                    Applicable LOBs <span className="text-danger">*</span>
+                  </label>
+                  {LOB_OPTIONS.map((lob) => (
+                    <div className="form-check form-check-inline" key={lob}>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={form.applicableLOBs.includes(lob)}
+                        onChange={() => onLobChange(lob)}
+                      />
+                      <label className="form-check-label">{lob}</label>
+                    </div>
                   ))}
-                </select>
+                  {errors.applicableLOBs && (
+                    <div className="text-danger small">
+                      {errors.applicableLOBs}
+                    </div>
+                  )}
+                </div>
+
+                <div className="col-md-6">
+                  <FormField
+                    type="date"
+                    label="Effective From"
+                    name="effectiveFrom"
+                    value={form.effectiveFrom}
+                    min={today}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.effectiveFrom}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <FormField
+                    type="date"
+                    label="Effective To"
+                    name="effectiveTo"
+                    value={form.effectiveTo}
+                    min={form.effectiveFrom || today}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.effectiveTo}
+                  />
+                </div>
               </div>
-
-              <FormField
-                label="Reinsurer ID"
-                name="reinsurerId"
-                value={form.reinsurerId}
-                placeholder="Enter reinsurer ID"
-                onChange={onChangeHandler}
-              />
-
-              <FormField
-                label="Share %"
-                type="number"
-                name="sharePercentage"
-                value={form.sharePercentage}
-                placeholder="Enter share %"
-                min={0}
-                max={100}
-                onChange={onChangeHandler}
-              />
-
-              <FormField
-                label="Retention Limit"
-                type="number"
-                name="retentionLimit"
-                value={form.retentionLimit}
-                min={0}
-                placeholder="Enter retention limit"
-                onChange={onChangeHandler}
-              />
-
-              <FormField
-                label="Treaty Limit"
-                type="number"
-                name="treatyLimit"
-                value={form.treatyLimit}
-                min={0}
-                placeholder="Enter treaty limit"
-                onChange={onChangeHandler}
-              />
-
-              <div className="mb-3">
-                <label className="form-label d-block">Applicable LOBs</label>
-                {LOB_OPTIONS.map((lob) => (
-                  <div className="form-check form-check-inline" key={lob}>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={form.applicableLOBs.includes(lob)}
-                      onChange={() => onLobChange(lob)}
-                    />
-                    <label className="form-check-label">{lob}</label>
-                  </div>
-                ))}
-              </div>
-              <FormField
-                type="date"
-                label="Effective From"
-                name="effectiveFrom"
-                value={form.effectiveFrom || ""}
-                min={today}
-                onChange={onChangeHandler}
-              />
-              <FormField
-                type="date"
-                label="Effective To"
-                name="effectiveTo"
-                value={form.effectiveTo || ""}
-                min={form.effectiveFrom || today}
-                onChange={onChangeHandler}
-              />
             </div>
 
-            <div className="d-flex justify-content-end p-4 pt-2">
+            <div className="modal-footer px-4 py-3">
               <button
-                className="btn btn-outline-secondary me-3"
+                className="btn btn-outline-secondary"
                 onClick={() => onClose(false)}
               >
                 Cancel
               </button>
-              <button
-                className="btn btn-success"
-                onClick={onSubmitHandler}
-                disabled={isActionDisabled()}
-              >
-                {isEdit ? "Update" : "Create"}
+              <button className="btn btn-success" onClick={onSubmitHandler}>
+                {isEdit ? "Update Treaty" : "Create Treaty"}
               </button>
             </div>
           </div>

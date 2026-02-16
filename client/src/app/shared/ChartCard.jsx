@@ -1,15 +1,17 @@
 export default function ChartCard({ title, hasData, children }) {
   return (
-    <div className="col-12 col-lg-6 mb-4">
-      <div className="card shadow h-100 p-3">
-        <h6 className="mb-3">{title}</h6>
+    <div className="card border-0 shadow-sm rounded-3 h-100">
+      <div className="card-body d-flex flex-column p-4">
+        <h6 className="fw-semibold mb-3">{title}</h6>
 
         {!hasData ? (
-          <div className="text-center text-muted my-auto py-5">
+          <div className="text-center text-muted flex-grow-1 d-flex align-items-center justify-content-center">
             No data available
           </div>
         ) : (
-          <div className="ms-3 mt-3">{children}</div>
+          <div className="flex-grow-1 d-flex align-items-center justify-content-center">
+            {children}
+          </div>
         )}
       </div>
     </div>

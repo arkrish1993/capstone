@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/capstone.svg";
 import api from "../../services/apiClient";
 import Alert from "../../shared/Alert";
-import Loader from "../../shared/Loader";
 import { useAuth } from "../../hooks/useAuth";
 
 const getRerouteURL = (role) => {
@@ -20,7 +19,7 @@ const getRerouteURL = (role) => {
 
 export default function Login() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({ email: "", password: "" });
   const [authError, setAuthError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { setLoginCredentials } = useAuth();
@@ -30,14 +29,17 @@ export default function Login() {
       e.preventDefault();
       setAuthError(null);
       setIsLoading(true);
+
       const res = await api.post("/auth/login", form);
+
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("token", res.data.token);
       setLoginCredentials(res.data);
+
       navigate(getRerouteURL(res.data.user?.role));
-      setIsLoading(false);
-    } catch (err) {
-      setAuthError(err);
+    } catch {
+      setAuthError(true);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -50,38 +52,44 @@ export default function Login() {
           onDismiss={() => setAuthError(null)}
         />
       )}
-      <div className="container-fluid vh-100 d-flex bg-success bg-gradient align-items-center justify-content-center">
+
+      <div
+        className="container-fluid vh-100 d-flex align-items-center justify-content-center"
+        style={{
+          background: "linear-gradient(135deg, #198754 0%, #0f5132 100%)",
+        }}
+      >
         <div
-          className="card shadow-lg border-0"
-          style={{ maxWidth: 900, width: "100%" }}
+          className="card shadow-lg border-0 rounded-4"
+          style={{ maxWidth: 920, width: "100%" }}
         >
           <div className="row g-0">
-            <div className="col-md-5 bg-dark bg-gradient text-white d-flex flex-column align-items-center justify-content-center p-4">
+            <div className="col-md-5 bg-dark text-white d-flex flex-column align-items-center justify-content-center p-5 rounded-start-4">
               <img src={logo} alt="Logo" width={90} className="mb-3" />
               <h4
-                className="fw-bold text-uppercase text-center"
-                style={{ letterSpacing: "9px" }}
+                className="fw-bold text-uppercase text-center mb-2"
+                style={{ letterSpacing: "6px" }}
               >
                 CAPSTONE
               </h4>
-              <p className="text-center mt-2" style={{ fontSize: 14 }}>
+              <p className="text-center opacity-75" style={{ fontSize: 14 }}>
                 Insurance Policy & Claims Management System
               </p>
             </div>
 
             <div className="col-md-7 p-5">
-              <h4 className="mb-4 fw-semibold">Login</h4>
-
-              <form onSubmit={submit}>
+              <form onSubmit={submit} noValidate>
                 <div className="mb-3">
                   <label className="form-label">Email address</label>
                   <input
                     type="email"
                     className="form-control"
                     placeholder="Enter email"
-                    onChange={(e) => {
-                      setForm({ ...form, email: e.target.value });
-                    }}
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                    required
                   />
                 </div>
 
@@ -91,18 +99,20 @@ export default function Login() {
                     type="password"
                     className="form-control"
                     placeholder="Enter password"
-                    onChange={(e) => {
-                      setForm({ ...form, password: e.target.value });
-                    }}
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({ ...form, password: e.target.value })
+                    }
+                    required
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="btn btn-success w-100 mt-3"
+                  className="btn btn-success w-100 mt-3 d-flex align-items-center justify-content-center gap-2"
                   disabled={!form.email || !form.password || isLoading}
                 >
-                  {isLoading ? <Loader /> : "Sign In"}
+                  {isLoading ? "Signing In..." : "Sign In"}
                 </button>
               </form>
             </div>

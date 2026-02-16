@@ -6,7 +6,7 @@ import Badge from "../../shared/Badge";
 import DataTable from "../../shared/DataTable";
 import TreatyForm from "./TreatyForm";
 import { useAuth } from "../../hooks/useAuth";
-import { isAllowed, toDDMMMYYYY } from "../../common/utils";
+import { isAllowed, toDDMMMYYYY, convertToCurrency } from "../../common/utils";
 import AppShell from "../../layouts/AppShell";
 import {
   TREATY_TABLE_COLUMNS,
@@ -57,51 +57,62 @@ export default function TreatyList() {
 
   return (
     <AppShell links={REINSURER_ANALYST_LINKS}>
-      <div className="card shadow-sm">
-        <div className="card-header d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
-          <h5 className="mb-0">Treaties</h5>
-          {isCreateAllowed && (
-            <button className="btn btn-success" onClick={onCreate}>
-              <i className="bi bi-plus-lg me-1"></i>Create Treaty
-            </button>
-          )}
-        </div>
+      <div className="container py-4">
+        <div className="card shadow-lg border-0 rounded-3">
+          <div className="card-header bg-dark bg-gradient text-white py-3 px-4 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className="mb-0">Treaties</h5>
+              <small className="opacity-75">
+                Manage reinsurance treaty configurations
+              </small>
+            </div>
 
-        {!treaties.length && (
-          <EmptyState title="No data found. Please click on 'Create Treaty' to proceed." />
-        )}
-
-        {treaties.length > 0 && (
-          <DataTable
-            columns={TREATY_TABLE_COLUMNS}
-            data={treaties}
-            renderRow={(treaty) => (
-              <tr key={treaty._id} height="50" className="align-middle">
-                <td>{treaty.treatyName}</td>
-                <td>{treaty.treatyType}</td>
-                <td>{treaty.reinsurerId.code}</td>
-                <td>{treaty.sharePercentage}%</td>
-                <td>₹{treaty.retentionLimit}</td>
-                <td>₹{treaty.treatyLimit}</td>
-                <td>{toDDMMMYYYY(treaty.effectiveFrom)}</td>
-                <td>{toDDMMMYYYY(treaty.effectiveTo)}</td>
-                <td>
-                  <Badge type={treaty.status} badgeText={treaty.status} />
-                </td>
-                <td className="text-end">
-                  {isEditAllowed && treaty.status !== "EXPIRED" && (
-                    <button
-                      className="btn btn-outline-success btn-sm me-2"
-                      onClick={() => onEdit(treaty)}
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </button>
-                  )}
-                </td>
-              </tr>
+            {isCreateAllowed && (
+              <button className="btn btn-success" onClick={onCreate}>
+                <i className="bi bi-plus-lg me-1"></i>
+                Create Treaty
+              </button>
             )}
-          />
-        )}
+          </div>
+
+          <div className="card-body p-4">
+            {!treaties.length && (
+              <EmptyState title="No treaties found. Create one to get started." />
+            )}
+
+            {treaties.length > 0 && (
+              <DataTable
+                columns={TREATY_TABLE_COLUMNS}
+                data={treaties}
+                renderRow={(treaty) => (
+                  <tr key={treaty._id} className="align-middle">
+                    <td className="fw-medium">{treaty.treatyName}</td>
+                    <td>{treaty.treatyType}</td>
+                    <td>{treaty.reinsurerId.code}</td>
+                    <td>{treaty.sharePercentage}%</td>
+                    <td>{convertToCurrency(treaty.retentionLimit)}</td>
+                    <td>{convertToCurrency(treaty.treatyLimit)}</td>
+                    <td>{toDDMMMYYYY(treaty.effectiveFrom)}</td>
+                    <td>{toDDMMMYYYY(treaty.effectiveTo)}</td>
+                    <td>
+                      <Badge type={treaty.status} badgeText={treaty.status} />
+                    </td>
+                    <td className="text-end">
+                      {isEditAllowed && treaty.status !== "EXPIRED" && (
+                        <button
+                          className="btn btn-outline-success btn-sm"
+                          onClick={() => onEdit(treaty)}
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                )}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <TreatyForm

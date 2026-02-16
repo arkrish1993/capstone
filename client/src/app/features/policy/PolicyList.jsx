@@ -14,15 +14,17 @@ import { useNavigate } from "react-router-dom";
 import AppShell from "../../layouts/AppShell";
 import { useAuth } from "../../hooks/useAuth";
 import ConfirmDialog from "../../shared/ConfirmDialog";
+import Alert from "../../shared/Alert";
 
 export default function PolicyList() {
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const { loggedInUser } = useAuth();
 
   const isCreateAllowed = isAllowed(loggedInUser?.user?.permissions, "CREATE");
@@ -36,7 +38,7 @@ export default function PolicyList() {
     try {
       setLoading(true);
       const res = await api.get("/policies");
-      setPolicies(res.data);
+      setPolicies(res.data || []);
     } catch {
       setError("Failed to fetch policies.");
     } finally {
@@ -53,113 +55,137 @@ export default function PolicyList() {
   };
 
   const onEdit = (policyId) => {
+    if (!policyId) return;
     navigate(`/policy/edit/${policyId}`);
   };
 
   const onSubmit = (policy) => {
+    if (!policy?._id) return;
     setSelectedItem(policy);
     setShowConfirmModal(true);
   };
 
-  const submitForApproval = async (policyId) => {
+  const submitForApproval = async () => {
+    if (!selectedItem?._id) return;
+
+    setAlertMessage("");
     try {
       setLoading(true);
-      await api.post(`/policies/${policyId}/approve`);
+      await api.post(`/policies/${selectedItem._id}/approve`);
       fetchPolicies();
     } catch (error) {
-      setError(error.message);
+      setAlertMessage(error.message || "Failed to submit policy.");
     } finally {
+      setShowConfirmModal(false);
       setSelectedItem(null);
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <Loader loaderStyle="spinner-grow spinner-grow text-success mt-4 px-3" />
-    );
-  }
-
-  if (error) {
-    return <ErrorState message={error} />;
-  }
+  if (loading) return <Loader />;
+  if (error) return <ErrorState message={error} />;
 
   return (
     <AppShell links={UNDERWRITER_LINKS}>
-      <div className="card shadow-sm">
-        <div className="card-header w-100 d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
-          <h5 className="mb-0">Policies</h5>
-          {isCreateAllowed && (
-            <button className="btn btn-success" onClick={onCreate}>
-              <i className="bi bi-plus-lg me-1"></i>
-              Create Policy
-            </button>
-          )}
-        </div>
-        {!policies.length && (
-          <EmptyState title="No data found. Please click on 'Create Policy' to proceed." />
-        )}
-        {policies.length > 0 && (
-          <DataTable
-            columns={POLICY_TABLE_COLUMNS}
-            data={policies}
-            renderRow={(policy) => (
-              <tr key={policy._id} height="50" className="align-middle">
-                <td>{policy.policyNumber}</td>
-                <td>{policy.insuredName}</td>
-                <td>
-                  <Badge type="dark" badgeText={policy.insuredType} />
-                </td>
-                <td>
-                  <Badge type="dark" badgeText={policy.lineOfBusiness} />
-                </td>
-                <td>₹{policy.sumInsured}</td>
-                <td>₹{policy.premium}</td>
-                <td>₹{policy.retentionLimit}</td>
-                <td>
-                  <Badge type={policy.status} badgeText={policy.status} />
-                </td>
-                <td>{toDDMMMYYYY(policy.effectiveFrom)}</td>
-                <td>{toDDMMMYYYY(policy.effectiveTo)}</td>
-                <td>{policy.createdBy ? policy.createdBy.username : ""}</td>
-                <td>{policy.approvedBy ? policy.approvedBy.username : "-"}</td>
-                <td>
-                  <div className="d-flex justify-content-end">
-                    {isEditAllowed &&
-                      !policy.approvedBy &&
-                      policy.status !== "EXPIRED" && (
-                        <button
-                          className="btn btn-outline-success btn-sm me-2"
-                          onClick={() => onEdit(policy._id)}
-                          title="Edit"
-                        >
-                          <i className="bi bi-pencil-square"></i>
-                        </button>
-                      )}
-                    {isApproveAllowed &&
-                      !policy.approvedBy &&
-                      policy.status !== "EXPIRED" && (
-                        <button
-                          className="btn btn-outline-success btn-sm me-2"
-                          onClick={() => onSubmit(policy)}
-                          title="Submit for approval"
-                        >
-                          <i className="bi bi-check-circle"></i>
-                        </button>
-                      )}
-                  </div>
-                </td>
-              </tr>
-            )}
+      <div className="container py-4">
+        {!!alertMessage && (
+          <Alert
+            alertMessage={alertMessage}
+            onDismiss={() => setAlertMessage("")}
           />
         )}
+
+        <div className="card shadow-lg border-0 rounded-3">
+          <div className="card-header bg-dark bg-gradient text-white py-3 px-4 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className="mb-0">Policies</h5>
+              <small className="opacity-75">Manage underwriting policies</small>
+            </div>
+
+            {isCreateAllowed && (
+              <button className="btn btn-success" onClick={onCreate}>
+                <i className="bi bi-plus-lg me-1"></i>
+                Create Policy
+              </button>
+            )}
+          </div>
+
+          <div className="card-body p-4">
+            {!policies.length && (
+              <EmptyState title="No policies found. Create one to get started." />
+            )}
+
+            {policies.length > 0 && (
+              <DataTable
+                columns={POLICY_TABLE_COLUMNS}
+                data={policies}
+                renderRow={(policy) => (
+                  <tr key={policy._id} className="align-middle">
+                    <td className="fw-medium">{policy.policyNumber}</td>
+                    <td>{policy.insuredName}</td>
+
+                    <td>
+                      <Badge type="dark" badgeText={policy.insuredType} />
+                    </td>
+
+                    <td>
+                      <Badge type="dark" badgeText={policy.lineOfBusiness} />
+                    </td>
+
+                    <td>₹{policy.sumInsured}</td>
+                    <td>₹{policy.premium}</td>
+                    <td>₹{policy.retentionLimit}</td>
+
+                    <td>
+                      <Badge type={policy.status} badgeText={policy.status} />
+                    </td>
+
+                    <td>{toDDMMMYYYY(policy.effectiveFrom)}</td>
+                    <td>{toDDMMMYYYY(policy.effectiveTo)}</td>
+
+                    <td>{policy.createdBy?.username || "-"}</td>
+                    <td>{policy.approvedBy?.username || "-"}</td>
+
+                    <td className="text-end">
+                      <div className="d-flex justify-content-end gap-2">
+                        {isEditAllowed &&
+                          !policy.approvedBy &&
+                          policy.status !== "EXPIRED" && (
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => onEdit(policy._id)}
+                              title="Edit"
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </button>
+                          )}
+
+                        {isApproveAllowed &&
+                          !policy.approvedBy &&
+                          policy.status !== "EXPIRED" && (
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => onSubmit(policy)}
+                              title="Submit for approval"
+                            >
+                              <i className="bi bi-check-circle"></i>
+                            </button>
+                          )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <ConfirmDialog
         showModal={showConfirmModal}
-        title="Submit for approval"
-        message={`Are you sure you want to submit this policy for approval?`}
-        onConfirm={() => submitForApproval(selectedItem._id)}
+        title="Submit for Approval"
+        message="Are you sure you want to submit this policy for approval?"
+        onConfirm={submitForApproval}
         onCancel={() => setShowConfirmModal(false)}
       />
     </AppShell>

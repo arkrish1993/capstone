@@ -1,44 +1,53 @@
 import { useNavigate } from "react-router-dom";
-import api from "../../services/apiClient";
-import { convertToCurrency, toDDMMMYYYY } from "../../common/utils";
 import { useState } from "react";
+import api from "../../services/apiClient";
 import Alert from "../../shared/Alert";
+import { convertToCurrency, toDDMMMYYYY } from "../../common/utils";
 
 const Row = ({ label, value }) => (
   <div className="row mb-2">
-    <div className="col-5 text-muted fw-semibold">{label}</div>
-    <div className="col-7">{value || "-"}</div>
+    <div className="col-md-5 text-muted fw-semibold">{label}</div>
+    <div className="col-md-7">{value || "-"}</div>
   </div>
 );
 
 const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
   const navigate = useNavigate();
   const [alertMessage, setAlertMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const onSave = async () => {
     setAlertMessage("");
     try {
+      setSaving(true);
+
       if (mode === "edit") {
         await api.put(`/policies/${policyId}`, data);
       } else {
         await api.post("/policies/", data);
       }
+
+      navigate("/policy");
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.message || "Failed to save policy.");
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
-    <>
+    <div>
       {!!alertMessage && (
         <Alert
           alertMessage={alertMessage}
           onDismiss={() => setAlertMessage("")}
         />
       )}
-      <h4>Review Policy</h4>
-      <div className="card border-success shadow-sm p-3 my-3">
-        <div className="card-body">
+
+      <h5 className="mb-4">Review Policy</h5>
+
+      <div className="card shadow-sm border-0 mb-4">
+        <div className="card-body px-4 py-3">
           <Row label="Line of Business" value={data.lineOfBusiness} />
           <Row label="Insured Type" value={data.insuredType} />
           <Row label="Insured Name" value={data.insuredName} />
@@ -53,26 +62,26 @@ const PolicyStepReview = ({ data, onBack, onCancel, mode, policyId }) => {
         </div>
       </div>
 
-      <div className="d-flex justify-content-end pt-2">
-        <button className="btn btn-outline-secondary me-2" onClick={onCancel}>
+      <div className="d-flex justify-content-between">
+        <button className="btn btn-outline-secondary" onClick={onCancel}>
           Cancel
         </button>
-        <button className="btn btn-outline-secondary me-2" onClick={onBack}>
-          Back
-        </button>
-        <button
-          className="btn btn-success me-2"
-          onClick={() => {
-            onSave();
-            if (!alertMessage) {
-              navigate("/policy");
-            }
-          }}
-        >
-          Save
-        </button>
+
+        <div>
+          <button className="btn btn-outline-secondary me-2" onClick={onBack}>
+            Back
+          </button>
+
+          <button
+            className="btn btn-success"
+            onClick={onSave}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save Policy"}
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

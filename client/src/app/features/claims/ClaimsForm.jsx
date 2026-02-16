@@ -12,60 +12,77 @@ export default function ClaimsForm({
 }) {
   const isEdit = !!claimData;
   const today = new Date().toISOString().split("T")[0];
-  const [alertMessage, setAlertMessage] = useState("");
 
-  const [form, setForm] = useState({
+  const [alertMessage, setAlertMessage] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const emptyForm = {
     policyId: "",
-    claimAmount: 0,
-    approvedAmount: 0,
-    incidentDate: null,
-  });
+    claimAmount: "",
+    approvedAmount: "",
+    incidentDate: "",
+  };
+
+  const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
     if (claimData) {
-      //eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
-        policyId: claimData.policyId?.policyNumber,
-        claimAmount: claimData.claimAmount,
+        policyId: claimData.policyId?.policyNumber || "",
+        claimAmount: claimData.claimAmount || "",
+        approvedAmount: claimData.approvedAmount || "",
         incidentDate: toYYYYMMDD(claimData.incidentDate),
       });
     } else {
-      setForm({
-        policyId: "",
-        claimAmount: 0,
-        incidentDate: null,
-      });
+      setForm(emptyForm);
     }
+    setErrors({});
   }, [claimData, showModal]);
 
   if (!showModal) return null;
 
-  const isActionDisabled = () => {
-    if (!isEdit) {
-      return !form.policyId || !form.claimAmount || !form.incidentDate;
-    } else {
-      if (mode === "edit") {
-        return !form.policyId || !form.claimAmount || !form.incidentDate;
-      } else {
-        return !form.approvedAmount;
-      }
-    }
-  };
-
   const onChangeHandler = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const validate = () => {
+    const e = {};
+
+    if (!form.policyId.trim()) e.policyId = "Policy ID is required.";
+
+    if (!form.claimAmount || Number(form.claimAmount) <= 0)
+      e.claimAmount = "Claim amount must be greater than 0.";
+
+    if (!form.incidentDate) e.incidentDate = "Incident date is required.";
+
+    if (form.incidentDate && form.incidentDate > today)
+      e.incidentDate = "Incident date cannot be in the future.";
+
+    if (mode === "approve") {
+      if (!form.approvedAmount || Number(form.approvedAmount) <= 0)
+        e.approvedAmount = "Approved amount must be greater than 0.";
+
+      if (Number(form.approvedAmount) > Number(form.claimAmount))
+        e.approvedAmount = "Approved amount cannot exceed claim amount.";
+    }
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const onSubmitHandler = async () => {
     setAlertMessage("");
+    if (!validate()) return;
+
     const payload = {
-      policyId: form.policyId.toUpperCase(),
-      claimAmount: form.claimAmount,
+      policyId: form.policyId.trim().toUpperCase(),
+      claimAmount: Number(form.claimAmount),
       incidentDate: form.incidentDate,
     };
 
-    if (form.approvedAmount) {
-      payload.approvedAmount = form.approvedAmount;
+    if (mode === "approve") {
+      payload.approvedAmount = Number(form.approvedAmount);
     }
 
     try {
@@ -75,12 +92,14 @@ export default function ClaimsForm({
           status: mode === "approve" ? "APPROVED" : "IN_REVIEW",
         });
       } else {
-        await api.post("/claims/", payload);
+        await api.post("/claims", payload);
       }
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.message || "Failed to save claim.");
+      return;
     }
-    onClose();
+
+    onClose(true);
   };
 
   return (
@@ -91,11 +110,13 @@ export default function ClaimsForm({
           onDismiss={() => setAlertMessage("")}
         />
       )}
+
       <div className="modal-backdrop fade show"></div>
+
       <div className="modal fade show d-block">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header text-light bg-dark bg-gradient p-4">
+        <div className="modal-dialog modal-xl modal-dialog-centered">
+          <div className="modal-content border-0 shadow-lg rounded-3">
+            <div className="modal-header bg-dark text-white py-3 px-4">
               <h5 className="modal-title">
                 {isEdit
                   ? mode === "approve"
@@ -105,64 +126,78 @@ export default function ClaimsForm({
               </h5>
             </div>
 
-            <div className="modal-body px-5">
-              <FormField
-                label="Policy ID"
-                name="policyId"
-                value={form.policyId}
-                disabled={mode === "approve"}
-                placeholder="Enter policy ID"
-                onChange={onChangeHandler}
-              />
-              <FormField
-                type="number"
-                label="Claim amount"
-                name="claimAmount"
-                value={form.claimAmount}
-                min={0}
-                disabled={mode === "approve"}
-                placeholder="Enter claim amount"
-                onChange={onChangeHandler}
-              />
-              {mode === "approve" && (
-                <FormField
-                  type="number"
-                  label="Approved amount"
-                  name="approvedAmount"
-                  value={form.approvedAmount}
-                  min={0}
-                  placeholder="Enter approved amount"
-                  onChange={onChangeHandler}
-                />
-              )}
-              <FormField
-                type="date"
-                label="Incident date"
-                name="incidentDate"
-                disabled={mode === "approve"}
-                max={today}
-                value={form.incidentDate || ""}
-                onChange={onChangeHandler}
-              />
+            <div className="modal-body px-5 py-4">
+              <div className="row g-4">
+                <div className="col-md-6">
+                  <FormField
+                    label="Policy ID"
+                    name="policyId"
+                    value={form.policyId}
+                    disabled={mode === "approve"}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.policyId}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <FormField
+                    type="number"
+                    label="Claim Amount"
+                    name="claimAmount"
+                    min={0}
+                    value={form.claimAmount}
+                    disabled={mode === "approve"}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.claimAmount}
+                  />
+                </div>
+
+                {mode === "approve" && (
+                  <div className="col-md-6">
+                    <FormField
+                      type="number"
+                      label="Approved Amount"
+                      name="approvedAmount"
+                      min={0}
+                      value={form.approvedAmount}
+                      onChange={onChangeHandler}
+                      required
+                      error={errors.approvedAmount}
+                    />
+                  </div>
+                )}
+
+                <div className="col-md-6">
+                  <FormField
+                    type="date"
+                    label="Incident Date"
+                    name="incidentDate"
+                    max={today}
+                    disabled={mode === "approve"}
+                    value={form.incidentDate}
+                    onChange={onChangeHandler}
+                    required
+                    error={errors.incidentDate}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="d-flex justify-content-end text-light p-4 pt-2">
+            <div className="modal-footer px-4 py-3">
               <button
-                className="btn btn-outline-secondary me-3"
-                onClick={onClose}
+                className="btn btn-outline-secondary"
+                onClick={() => onClose(false)}
               >
                 Cancel
               </button>
-              <button
-                className="btn btn-success"
-                onClick={onSubmitHandler}
-                disabled={isActionDisabled()}
-              >
+              <button className="btn btn-success" onClick={onSubmitHandler}>
                 {isEdit
                   ? mode === "approve"
-                    ? "Approve"
+                    ? "Approve Claim"
                     : "Re-submit"
-                  : "Submit"}
+                  : "Submit Claim"}
               </button>
             </div>
           </div>

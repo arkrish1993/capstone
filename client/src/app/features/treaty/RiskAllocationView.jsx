@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../../services/apiClient";
 import Loader from "../../shared/Loader";
-import FormField from "../../shared/FormField"; // ← add this
+import FormField from "../../shared/FormField";
 import {
   REINSURER_ANALYST_LINKS,
   RISK_ALLOCATION_VIEW_COLUMNS,
@@ -19,10 +19,12 @@ export default function RiskAllocationView() {
 
   const handleCheck = async () => {
     if (!policyId.trim()) return;
+
     setLoading(true);
     setMessage("");
     setError("");
     setAllocations([]);
+
     try {
       const { data } = await api.get(`/risk-allocations/${policyId}`);
       if (data.length > 0) {
@@ -39,78 +41,79 @@ export default function RiskAllocationView() {
 
   return (
     <AppShell links={REINSURER_ANALYST_LINKS}>
-      <div className="card shadow m-4 mt-5 rounded-2">
-        <h5 className="bg-dark bg-gradient text-white p-4 rounded-top-2">
-          Risk Allocation View
-        </h5>
-        <h6 className="text-muted pt-2 px-4">
-          Please enter the Policy ID to proceed.{" "}
-        </h6>
-
-        <div className="d-flex gap-3 p-4 align-items-end">
-          <div className="flex-grow-1">
-            <FormField
-              label="Policy ID"
-              type="text"
-              value={policyId}
-              inputStyles="text-uppercase"
-              onChange={(e) => setPolicyId(e.target.value.toUpperCase())}
-            />
+      <div className="container py-5">
+        <div
+          className="card shadow-lg border-0 rounded-3 mx-auto"
+          style={{ maxWidth: 950 }}
+        >
+          <div className="card-header bg-dark bg-gradient text-white py-3 rounded-top-3">
+            <h5 className="mb-1">Risk Allocation View</h5>
+            <small className="text-light opacity-75">
+              Enter a Policy ID to view allocation details
+            </small>
           </div>
 
-          <button
-            className="btn btn-success mb-2"
-            style={{ position: "relative", top: -8 }}
-            onClick={handleCheck}
-            disabled={loading}
-          >
-            Check
-          </button>
+          <div className="card-body p-4">
+            <div className="row g-3 align-items-end mt-2">
+              <div className="col-md-9">
+                <FormField
+                  label="Policy ID"
+                  type="text"
+                  value={policyId}
+                  inputStyles="text-uppercase"
+                  onChange={(e) => setPolicyId(e.target.value.toUpperCase())}
+                />
+              </div>
+
+              <div className="col-md-3">
+                <button
+                  className="btn btn-success w-100"
+                  style={{ height: "38px", position: "relative", top: "-1rem" }}
+                  onClick={handleCheck}
+                  disabled={!policyId || loading}
+                >
+                  {loading ? "Checking..." : "Check"}
+                </button>
+              </div>
+            </div>
+
+            {loading && (
+              <div className="text-center mt-4">
+                <Loader />
+              </div>
+            )}
+
+            {!!message && (
+              <div className="alert alert-info text-center mt-4">{message}</div>
+            )}
+
+            {!!error && (
+              <div className="alert alert-danger text-center mt-4">{error}</div>
+            )}
+
+            {!loading && allocations.length > 0 && (
+              <div className="mt-4">
+                <DataTable
+                  columns={RISK_ALLOCATION_VIEW_COLUMNS}
+                  data={allocations}
+                  renderRow={(allocation) => {
+                    const a = allocation.allocations[0];
+                    return (
+                      <tr key={allocation._id} className="align-middle">
+                        <td>{`${a.reinsurerId.name} (${a.reinsurerId.code})`}</td>
+                        <td>{a.treatyId.treatyName}</td>
+                        <td>{convertToCurrency(a.treatyId.retentionLimit)}</td>
+                        <td>{convertToCurrency(a.treatyId.treatyLimit)}</td>
+                        <td>{convertToCurrency(a.allocatedAmount)}</td>
+                        <td>{a.allocatedPercentage}%</td>
+                      </tr>
+                    );
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
-
-        {loading && (
-          <div className="text-center mb-3">
-            <Loader loaderStyle="spinner-grow text-success" />
-          </div>
-        )}
-
-        {!!message && (
-          <div className="text-center text-muted mx-4 mb-4">{message}</div>
-        )}
-        {!!error && (
-          <div className="text-center text-danger mx-4 mb-4">{error}</div>
-        )}
-
-        {!loading && allocations.length > 0 && (
-          <div className="px-4 pb-4">
-            <DataTable
-              columns={RISK_ALLOCATION_VIEW_COLUMNS}
-              data={allocations}
-              renderRow={(allocation) => (
-                <tr key={allocation._id} height="50" className="align-middle">
-                  <td>{`${allocation.allocations[0].reinsurerId.name} (${allocation.allocations[0].reinsurerId.code})`}</td>
-                  <td>{allocation.allocations[0].treatyId.treatyName}</td>
-                  <td>
-                    {convertToCurrency(
-                      allocation.allocations[0].treatyId.retentionLimit,
-                    )}
-                  </td>
-                  <td>
-                    {convertToCurrency(
-                      allocation.allocations[0].treatyId.treatyLimit,
-                    )}
-                  </td>
-                  <td>
-                    {convertToCurrency(
-                      allocation.allocations[0].allocatedAmount,
-                    )}
-                  </td>
-                  <td>{allocation.allocations[0].allocatedPercentage}%</td>
-                </tr>
-              )}
-            />
-          </div>
-        )}
       </div>
     </AppShell>
   );

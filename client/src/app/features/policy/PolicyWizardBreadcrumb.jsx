@@ -2,49 +2,64 @@ const steps = ["General", "Coverage", "Review"];
 
 const PolicyWizardBreadcrumb = ({ currentStep }) => {
   return (
-    <div className="mb-4">
-      <div className="d-flex justify-content-between align-items-center">
-        {steps.map((step, index) => {
-          const isActive = index === currentStep;
-          const isCompleted = index < currentStep;
+    <div className="my-3">
+      <div className="mx-auto" style={{ maxWidth: 720 }}>
+        <div className="d-flex justify-content-between position-relative">
+          {steps.map((step, index) => {
+            const isActive = index === currentStep;
+            const isCompleted = index < currentStep;
 
-          return (
-            <div
-              key={step}
-              className="flex-fill text-center position-relative text-white"
-            >
+            return (
               <div
-                className={`rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center 
-                  ${isActive ? "bg-success" : ""}
-                  ${isCompleted ? "border border-success text-success" : ""}
-                  ${!isActive && !isCompleted ? "border" : ""}
-                `}
-                style={{ width: 40, height: 40 }}
+                key={step}
+                className="text-center flex-fill position-relative"
               >
-                {index + 1}
-              </div>
-              <div
-                className={`small fw-semibold
-                  ${isActive || isCompleted ? "text-success" : ""}
-                `}
-              >
-                {step}
-              </div>
-              {index < steps.length - 1 && (
+                {/* CIRCLE */}
                 <div
-                  className={`position-absolute top-50 start-100 translate-middle-y w-100`}
-                  style={{ height: 2, zIndex: -1 }}
+                  className={`mx-auto mb-2 d-flex align-items-center justify-content-center rounded-circle fw-semibold position-relative`}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    zIndex: 2,
+                    background: isActive ? "#198754" : "#fff",
+                    color: isActive ? "#fff" : "#6c757d",
+                    border: isActive
+                      ? "none"
+                      : isCompleted
+                        ? "2px solid #198754"
+                        : "2px solid #adb5bd",
+                  }}
                 >
-                  <div
-                    className={`h-100 ${
-                      isCompleted ? "bg-success" : "bg-light"
-                    }`}
-                  ></div>
+                  {index + 1}
                 </div>
-              )}
-            </div>
-          );
-        })}
+
+                {/* LABEL */}
+                <small
+                  className={`fw-semibold ${
+                    isActive || isCompleted ? "text-success" : "text-muted"
+                  }`}
+                >
+                  {step}
+                </small>
+
+                {index < steps.length - 1 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 22,
+                      left: "58%",
+                      width: "84%",
+                      height: 4,
+                      borderRadius: 10,
+                      background: isCompleted ? "#198754" : "#dee2e6",
+                      zIndex: 1,
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

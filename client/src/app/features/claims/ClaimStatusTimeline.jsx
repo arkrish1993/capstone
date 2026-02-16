@@ -4,7 +4,8 @@ import { toDDMMMYYYY } from "../../common/utils";
 export default function ClaimStatusTimeline({ show, onClose, data }) {
   const timeline = useMemo(() => {
     try {
-      return JSON.parse(data || "[]");
+      const parsed = JSON.parse(data || "[]");
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
@@ -15,35 +16,49 @@ export default function ClaimStatusTimeline({ show, onClose, data }) {
   return (
     <>
       <div className="modal-backdrop fade show"></div>
-      <div className="modal fade show d-block" tabIndex="-1">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header text-light bg-dark bg-gradient p-3">
-              <h5 className="modal-title">Claim Status Timeline</h5>
+
+      <div className="modal fade show d-block">
+        <div className="modal-dialog modal-xl modal-dialog-centered">
+          <div className="modal-content border-0 shadow-lg rounded-3">
+            <div className="modal-header bg-dark text-white py-3 px-4">
+              <div>
+                <h5 className="modal-title mb-0">Claim Status Timeline</h5>
+                <small className="opacity-75">
+                  Chronological claim activity
+                </small>
+              </div>
             </div>
-            <div className="modal-body">
+
+            <div className="modal-body px-5 py-4">
               {timeline.length === 0 ? (
-                <div className="text-muted">No remarks available.</div>
+                <div className="text-center text-muted py-5">
+                  No remarks available.
+                </div>
               ) : (
-                <table className="table table-striped">
-                  <thead className="table-light">
-                    <tr>
-                      <th style={{ width: "35%" }}>Date</th>
-                      <th>Message</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {timeline.map((obj, index) => (
-                      <tr key={index}>
-                        <td>{toDDMMMYYYY(obj.createdAt)}</td>
-                        <td>{obj.message}</td>
+                <div className="table-responsive">
+                  <table className="table table-hover align-middle">
+                    <thead className="table-light">
+                      <tr>
+                        <th style={{ width: "30%" }}>Date</th>
+                        <th>Message</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {timeline.map((obj, index) => (
+                        <tr key={index}>
+                          <td className="fw-medium">
+                            {obj?.createdAt ? toDDMMMYYYY(obj.createdAt) : "-"}
+                          </td>
+                          <td>{obj?.message || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
-            <div className="d-flex justify-content-end p-4 pt-1">
+
+            <div className="modal-footer px-4 py-3">
               <button className="btn btn-outline-secondary" onClick={onClose}>
                 Close
               </button>

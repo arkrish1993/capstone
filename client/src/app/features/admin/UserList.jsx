@@ -11,6 +11,7 @@ import Alert from "../../shared/Alert";
 import { useAuth } from "../../hooks/useAuth";
 import { isAllowed } from "../../common/utils";
 import AppShell from "../../layouts/AppShell";
+import EmptyState from "../../shared/EmptyState";
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
@@ -45,8 +46,8 @@ export default function UserList() {
   }, []);
 
   const onCreate = () => {
-    setShowModal(true);
     setSelectedItem(null);
+    setShowModal(true);
   };
 
   const onEdit = (user) => {
@@ -60,12 +61,14 @@ export default function UserList() {
   };
 
   const confirmDelete = async () => {
+    if (!userToDelete?._id) return;
+
     setAlertMessage("");
     try {
       await api.delete(`/users/${userToDelete._id}`);
       fetchUsers();
     } catch (error) {
-      setAlertMessage(error.message);
+      setAlertMessage(error.message || "Failed to delete user.");
     } finally {
       setShowDeleteConfirmModal(false);
       setUserToDelete(null);
@@ -83,81 +86,93 @@ export default function UserList() {
     if (reload) fetchUsers();
   };
 
-  if (loading) {
-    return (
-      <Loader loaderStyle="spinner-grow spinner-grow text-success mt-4 px-3" />
-    );
-  }
-
-  if (error) {
-    return <ErrorState message={error} />;
-  }
+  if (loading) return <Loader />;
+  if (error) return <ErrorState message={error} />;
 
   return (
     <AppShell links={ADMIN_LINKS}>
-      {!!alertMessage && (
-        <Alert
-          alertMessage={alertMessage}
-          onDismiss={() => setAlertMessage("")}
-        />
-      )}
-      <div className="card shadow-sm">
-        <div className="card-header d-flex justify-content-between align-items-center bg-dark bg-gradient text-white">
-          <h5 className="mb-0">Users</h5>
-          {isCreateAllowed && (
-            <button className="btn btn-success" onClick={onCreate}>
-              <i className="bi bi-plus-lg me-1"></i>
-              Create User
-            </button>
-          )}
-        </div>
+      <div className="container py-4">
+        {!!alertMessage && (
+          <Alert
+            alertMessage={alertMessage}
+            onDismiss={() => setAlertMessage("")}
+          />
+        )}
 
-        <DataTable
-          columns={USER_TABLE_COLUMNS}
-          data={users}
-          renderRow={(user) => (
-            <tr key={user._id} height="50" className="align-middle">
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>
-                <Badge type="dark" badgeText={user.role} />
-              </td>
-              <td>
-                <Badge type={user.status} badgeText={user.status} />
-              </td>
+        <div className="card shadow-lg border-0 rounded-3">
+          <div className="card-header bg-dark bg-gradient text-white py-3 px-4 d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className="mb-0">Users</h5>
+              <small className="opacity-75">
+                Manage system access and permissions
+              </small>
+            </div>
 
-              <td>
-                {!user.isRootUser && (
-                  <div className="d-flex justify-content-end">
-                    {isEditAllowed && (
-                      <button
-                        className="btn btn-outline-success btn-sm me-2"
-                        onClick={() => onEdit(user)}
-                        title="Edit"
-                      >
-                        <i className="bi bi-pencil-square"></i>
-                      </button>
-                    )}
+            {isCreateAllowed && (
+              <button className="btn btn-success" onClick={onCreate}>
+                <i className="bi bi-plus-lg me-1"></i>
+                Create User
+              </button>
+            )}
+          </div>
 
-                    {isDeleteAllowed && (
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        onClick={() => onDeleteClick(user)}
-                        title="Delete"
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
-                    )}
-                  </div>
+          <div className="card-body p-4">
+            {!users.length && (
+              <EmptyState title="No users found. Create one to get started." />
+            )}
+
+            {users.length > 0 && (
+              <DataTable
+                columns={USER_TABLE_COLUMNS}
+                data={users}
+                renderRow={(user) => (
+                  <tr key={user._id} className="align-middle">
+                    <td className="fw-medium">{user.username}</td>
+                    <td>{user.email}</td>
+
+                    <td>
+                      <Badge type="dark" badgeText={user.role} />
+                    </td>
+
+                    <td>
+                      <Badge type={user.status} badgeText={user.status} />
+                    </td>
+
+                    <td className="text-end">
+                      {!user.isRootUser && (
+                        <div className="d-flex justify-content-end gap-2">
+                          {isEditAllowed && (
+                            <button
+                              className="btn btn-outline-success btn-sm"
+                              onClick={() => onEdit(user)}
+                              title="Edit"
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </button>
+                          )}
+
+                          {isDeleteAllowed && (
+                            <button
+                              className="btn btn-outline-danger btn-sm"
+                              onClick={() => onDeleteClick(user)}
+                              title="Delete"
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
                 )}
-              </td>
-            </tr>
-          )}
-        />
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <UserForm
-        onClose={() => onModalClose(true)}
+        onClose={onModalClose}
         showModal={showModal}
         userData={selectedItem}
       />

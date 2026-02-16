@@ -10,21 +10,24 @@ export default function ConfirmDialog({
   return (
     <>
       <div className="modal-backdrop fade show"></div>
+
       <div className="modal fade show d-block">
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header text-light bg-dark bg-gradient p-3">
-              <h5 className="modal-title">{title}</h5>
+          <div className="modal-content border-0 shadow-lg rounded-3">
+            <div className="modal-header bg-dark bg-gradient text-white py-3 px-4">
+              <h5 className="modal-title mb-0">{title}</h5>
             </div>
-            <p className="p-3">{message}</p>
-            <div className="d-flex justify-content-end text-light p-4 pt-1">
-              <button
-                className="btn btn-outline-secondary btn-sm me-2"
-                onClick={onCancel}
-              >
+
+            <div className="modal-body px-4 py-3">
+              <p className="mb-0 text-muted">{message}</p>
+            </div>
+
+            <div className="modal-footer px-4 py-3">
+              <button className="btn btn-outline-secondary" onClick={onCancel}>
                 Cancel
               </button>
-              <button className="btn btn-danger btn-sm" onClick={onConfirm}>
+
+              <button className="btn btn-danger" onClick={onConfirm}>
                 Confirm
               </button>
             </div>
