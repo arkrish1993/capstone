@@ -134,6 +134,7 @@ export default function ClaimsForm({
                     label="Policy ID"
                     name="policyId"
                     value={form.policyId}
+                    inputStyles="text-uppercase"
                     disabled={mode === "approve"}
                     onChange={onChangeHandler}
                     required

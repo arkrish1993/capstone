@@ -198,3 +198,13 @@ CAPSTONE
 - Protected Routes
 - Permission Guarded Actions
 - Audit Logs
+
+## Future Enhancements
+
+- Handling of large amounts of table data
+- Performance optimizations
+- Allow dynamic data population in reference key fields like Policy ID, Reinsurer ID, etc.
+- Search and sort functionalities in data tables
+- Notifications
+- Security enhancements
+- Deployment

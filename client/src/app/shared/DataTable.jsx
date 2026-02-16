@@ -1,6 +1,9 @@
 export default function DataTable({ columns, data, renderRow }) {
   return (
-    <div className="table-responsive">
+    <div
+      className="table-responsive"
+      style={{ maxHeight: "60vh", overflowY: "auto" }}
+    >
       <table className="table table-hover align-middle mb-0">
         <thead className="table-light">
           <tr height="60">
@@ -12,7 +15,7 @@ export default function DataTable({ columns, data, renderRow }) {
                   key={col.key}
                   className={`bg-dark bg-gradient text-white ${
                     isActions ? "text-end pe-4" : ""
-                  }`}
+                  } sticky-header`}
                   style={isActions ? { width: "160px" } : {}}
                 >
                   {col.label}
