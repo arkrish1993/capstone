@@ -49,7 +49,6 @@ CAPSTONE
 │   │   │   │   ├── claims
 │   │   │   │   │   ├── ClaimsForm.jsx
 │   │   │   │   │   ├── ClaimsList.jsx
-│   │   │   │   │   └── ClaimStatusTimeline.jsx
 │   │   │   │   ├── dashboard
 │   │   │   │   │   ├─ charts
 │   │   │   │   │   |   ├─ ExposureBarChart.jsx
