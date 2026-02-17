@@ -1,6 +1,9 @@
 export default function ChartCard({ title, hasData, children }) {
   return (
-    <div className="card border-0 shadow-sm rounded-3 h-100">
+    <div
+      className="card border-0 shadow-sm rounded-3 h-100"
+      style={{ minHeight: "20rem" }}
+    >
       <div className="card-body d-flex flex-column p-4">
         <h6 className="fw-semibold mb-3">{title}</h6>
 

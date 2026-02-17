@@ -125,13 +125,19 @@ export default function AnalyticsDashboard() {
           </div>
 
           <div className="col-xl-6 col-lg-6 col-md-12">
-            <ChartCard title="Loss Ratio" hasData={!!lossRatio}>
-              <LossRatioRadial value={lossRatio?.lossRatioPercentage} />
+            <ChartCard
+              title="Loss Ratio"
+              hasData={Number(lossRatio?.lossRatioPercentage) > 0}
+            >
+              <LossRatioRadial value={Number(lossRatio?.lossRatioPercentage)} />
             </ChartCard>
           </div>
 
           <div className="col-xl-6 col-lg-6 col-md-12">
-            <ChartCard title="Retention vs Ceded" hasData={!!retention}>
+            <ChartCard
+              title="Retention vs Ceded"
+              hasData={retention.totalCeded > 0 && retention.totalRetained > 0}
+            >
               <RetentionPieChart
                 retained={retention?.totalRetained}
                 ceded={retention?.totalCeded}

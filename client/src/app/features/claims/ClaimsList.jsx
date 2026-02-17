@@ -113,7 +113,7 @@ export default function ClaimsList() {
 
   return (
     <AppShell links={CLAIMS_ADJUSTER_LINKS}>
-      <div className="container py-4">
+      <div className="container py-4" style={{ maxWidth: "100vw" }}>
         {!!alertMessage && (
           <Alert
             alertMessage={alertMessage}
@@ -121,7 +121,7 @@ export default function ClaimsList() {
           />
         )}
 
-        <div className="card shadow-lg border-0 rounded-3">
+        <div className="card shadow-lg border-0 rounded-3 mx-4">
           <div className="card-header bg-dark bg-gradient text-white py-3 px-4 d-flex justify-content-between align-items-center">
             <div>
               <h5 className="mb-0">Claims</h5>

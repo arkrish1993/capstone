@@ -42,7 +42,7 @@ export default function RiskAllocationView() {
 
   return (
     <AppShell links={REINSURER_ANALYST_LINKS}>
-      <div className="container py-5">
+      <div className="container py-5" style={{ maxWidth: "100vw" }}>
         <div
           className="card shadow-lg border-0 rounded-3 mx-auto"
           style={{ maxWidth: 950 }}
